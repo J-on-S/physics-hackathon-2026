@@ -399,7 +399,7 @@ def winlevel10():
         
 
 backgrounds = {}
-LEVELS = [ level1, level2, level3,level4, level5,level6,level7, level8, level9]
+LEVELS = [ level1, level2, level3,level4, level5,level6,level7, level8, level9,winlevel10]
 current_level = 1
 
 #def updatescore():
