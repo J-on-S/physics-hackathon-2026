@@ -211,6 +211,7 @@ while running:
     if check_hit():
         win_text = font.render("TARGET HIT!", True, (0,150,0))
         screen.blit(win_text, (WIDTH//2 - 60, 50))
+        pygame.display.flip() # Show the win text for 500ms
         pygame.time.delay(500)
         score += 1
 
