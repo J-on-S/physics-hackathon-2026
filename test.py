@@ -189,9 +189,6 @@ def draw_ui():
 
 def level1():
     global score, current_level
-    # Draw ground
-    pygame.draw.line(screen, (0,0,0), (0, GROUND_Y), (WIDTH, GROUND_Y), 2)
-
     # Draw target
     pygame.draw.rect(screen, (200, 0, 0), target_rect)
 
