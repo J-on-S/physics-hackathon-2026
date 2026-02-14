@@ -24,6 +24,11 @@ cannon_body = pygame.transform.scale(pygame.image.load("cannon_body.png"), (ball
 cannon_wheel = pygame.transform.scale(pygame.image.load("cannon_wheel.png"), (ball_radius*5, ball_radius*5))
 platform = pygame.Rect(0, INIT_BALL_Y + cannon_wheel.get_height(), 200, 300)
 
+pygame.mixer.init()
+# Music: https://pixabay.com/music/search/game%20background/
+pygame.mixer.music.load('backgroundmusicforvideos-gaming-game-minecraft-background-music-372242.mp3')
+pygame.mixer.music.play(-1)
+
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Physics Hackathon Prototype")
 
@@ -399,6 +404,10 @@ while running:
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_SPACE and not launched:
                 launch()
+            if event.key == pygame.K_n:
+                current_level += 1
+                if current_level > len(LEVELS):
+                    current_level = len(LEVELS)
     
     keys = pygame.key.get_pressed()
     if keys[pygame.K_r] or (ball_x > WIDTH):
