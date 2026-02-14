@@ -11,6 +11,12 @@ pygame.init()
 WIDTH, HEIGHT = 1000, 600
 FPS = 60
 DT = 1 / FPS
+ball_radius = 10
+angle = 45
+velocity = 400
+score = 0
+
+redbirdskin = pygame.transform.scale(pygame.image.load("redbird.png"), (ball_radius*10, ball_radius*10))
 
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Physics Hackathon Prototype")
@@ -24,6 +30,7 @@ GROUND_Y = HEIGHT - 50
 # RANDOM PHYSICS PARAMETERS
 # -------------------------
 def random_parameters():
+    global gravity, mass, drag_k, wind_x
     gravity = random.uniform(300, 800)
     mass = random.uniform(0.5, 5)
     drag_k = random.uniform(0.0, 1.5)
@@ -35,16 +42,12 @@ def random_parameters():
 # -------------------------
 # FUNCTIONS
 # -------------------------
-global score
-score = 0
-def reset_round():
-    global gravity, mass, drag_k, wind_x
-    global ball_x, ball_y, vx, vy, launched
-    global target_rect
-    global angle
-    global velocity
-    global ball_radius
 
+def reset_round():
+    global target_rect
+    global ball_x, ball_y, vx, vy, launched
+    global vx, vy, launched
+    global gravity, mass, drag_k, wind_x
     angle = 45
     velocity = 400
 
@@ -67,16 +70,20 @@ def reset_round():
 reset_round()
 
 def launch():
+    global target_rect
+    global ball_x, ball_y, vx, vy, launched
     global vx, vy, launched
-
+    global gravity, mass, drag_k, wind_x
     rad = math.radians(angle)
     vx = velocity * math.cos(rad)
     vy = -velocity * math.sin(rad)
     launched = True
 
 def update_physics():
+    global target_rect
     global ball_x, ball_y, vx, vy, launched
-
+    global vx, vy, launched
+    global gravity, mass, drag_k, wind_x
     if not launched:
         return
 
@@ -105,6 +112,10 @@ def update_physics():
         reset_round()
 
 def check_hit():
+    global target_rect
+    global ball_x, ball_y, vx, vy, launched
+    global vx, vy, launched
+    global gravity, mass, drag_k, wind_x
     ball_rect = pygame.Rect(
         ball_x - ball_radius,
         ball_y - ball_radius,
@@ -114,6 +125,10 @@ def check_hit():
     return ball_rect.colliderect(target_rect)
 
 def draw_ui():
+    global target_rect
+    global ball_x, ball_y, vx, vy, launched
+    global vx, vy, launched
+    global gravity, mass, drag_k, wind_x
     info = [
         f"Gravity: {gravity:.1f}",
         f"Mass: {mass:.2f}",
@@ -185,7 +200,8 @@ while running:
     pygame.draw.rect(screen, (200, 0, 0), target_rect)
 
     # Draw ball
-    pygame.draw.circle(screen, (0, 100, 255), (int(ball_x), int(ball_y)), ball_radius)
+    #pygame.draw.circle(screen, (0, 100, 255), (int(ball_x), int(ball_y)), ball_radius)
+    screen.blit(redbirdskin, (int(ball_x) - (redbirdskin.get_width()/2), int(ball_y) - (redbirdskin.get_height()/2)))
 
     # Draw launcher line
     if not launched:
@@ -201,8 +217,6 @@ while running:
         pygame.time.delay(500)
         score += 1
         #press key to continue
-
-        score += 1
         reset_round()
 
     draw_ui()
