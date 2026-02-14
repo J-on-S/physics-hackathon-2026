@@ -201,8 +201,6 @@ while running:
         pygame.time.delay(500)
         score += 1
         #press key to continue
-
-        score += 1
         reset_round()
 
     draw_ui()
