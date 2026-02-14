@@ -22,6 +22,7 @@ score = 0
 redbirdskin = pygame.transform.scale(pygame.image.load("redbird.png"), (ball_radius*8, ball_radius*8))
 cannon_body = pygame.transform.scale(pygame.image.load("cannon_body.png"), (ball_radius*10, ball_radius*10))
 cannon_wheel = pygame.transform.scale(pygame.image.load("cannon_wheel.png"), (ball_radius*5, ball_radius*5))
+platform = pygame.Rect(0, INIT_BALL_Y + cannon_wheel.get_height(), 200, 300)
 
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Physics Hackathon Prototype")
@@ -442,6 +443,9 @@ while running:
     cannon_y = (INIT_BALL_Y - (cannon_body.get_height()/2))
     screen.blit(cannon_body, (cannon_x, cannon_y))
     screen.blit(cannon_wheel, (INIT_BALL_X - (cannon_wheel.get_width()/2), INIT_BALL_Y + (cannon_wheel.get_height()/3)))
+
+    #Draws ground
+    pygame.draw.rect(screen, (0, 0, 0), platform)
     
     # Draw launcher line
     #if not launched:
@@ -451,13 +455,13 @@ while running:
     #    pygame.draw.line(screen, (0,0,0), (ball_x, ball_y), (lx, ly), 3)
 
     # Draw predicted trajectory as a dotted line
-    if not launched:
-        trajectory_points = calculate_trajectory()
-        if len(trajectory_points) > 1:
-            for i in range(0, len(trajectory_points)-1, 3):  # skip every 3 points to create gaps
-                start = trajectory_points[i]
-                end = trajectory_points[i+1]
-                pygame.draw.line(screen, (150, 150, 150), start, end, 2)
+    #if not launched:
+    #    trajectory_points = calculate_trajectory()
+    #    if len(trajectory_points) > 1:
+    #        for i in range(0, len(trajectory_points)-1, 3):  # skip every 3 points to create gaps
+    #            start = trajectory_points[i]
+    #            end = trajectory_points[i+1]
+    #            pygame.draw.line(screen, (150, 150, 150), start, end, 2)
 
 
     draw_ui()
