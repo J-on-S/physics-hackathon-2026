@@ -168,6 +168,19 @@ def calculate_trajectory():
 
     return points
 
+images = {}
+def load_background(filename):
+    global images
+    if filename not in images:
+        background = pygame.image.load(filename).convert()
+        background = pygame.transform.scale(background, (WIDTH, HEIGHT))
+        background.set_alpha(206)
+        images[filename] = background
+        return background
+    else:
+        return images[filename]
+
+
 def draw_ui():
     global target_rect
     global ball_x, ball_y, vx, vy, launched
@@ -199,14 +212,7 @@ def draw_ui():
     screen.blit(scoretextobject, (WIDTH-scoretextobject.get_width()-10, 10))
 
 def level1():
-    global backgrounds
-    if 1 not in backgrounds:
-        background = pygame.image.load("mercury.png").convert()
-        background = pygame.transform.scale(background, (WIDTH, HEIGHT))
-        background.set_alpha(206)
-        backgrounds[1] = background
-    else:
-        background = backgrounds[1]
+    background = load_background("mercury.png")
     screen.blit(background, (0, 0))
     global score, current_level
     # Draw target
@@ -226,14 +232,7 @@ def level1():
         reset_round()
 
 def level2():
-    global backgrounds
-    if 2 not in backgrounds:
-        background = pygame.image.load("venus2.png").convert()
-        background = pygame.transform.scale(background, (WIDTH, HEIGHT))
-        background.set_alpha(206)
-        backgrounds[2] = background
-    else:
-        background = backgrounds[2]
+    background = load_background("venus2.png")
     screen.blit(background, (0, 0))
     global score, current_level
     # Draw target
@@ -253,14 +252,7 @@ def level2():
         reset_round()
 
 def level3():
-    global backgrounds
-    if 3 not in backgrounds:
-        background = pygame.image.load("earth2.png").convert()
-        background = pygame.transform.scale(background, (WIDTH, HEIGHT))
-        background.set_alpha(206)
-        backgrounds[3] = background
-    else:
-        background = backgrounds[3]
+    background = load_background("earth2.png")
     screen.blit(background, (0, 0))
     global score, current_level
     # Draw target
@@ -279,14 +271,7 @@ def level3():
         #press key to continue
         reset_round()
 def level4():
-    global backgrounds
-    if 4 not in backgrounds:
-        background = pygame.image.load("moon2.png").convert()
-        background = pygame.transform.scale(background, (WIDTH, HEIGHT))
-        background.set_alpha(206)
-        backgrounds[4] = background
-    else:
-        background = backgrounds[4]
+    background = load_background("moon2.png")
     screen.blit(background, (0, 0))
     global score, current_level
     # Draw target
@@ -305,14 +290,7 @@ def level4():
         #press key to continue
         reset_round()
 def level5():
-    global backgrounds
-    if 5 not in backgrounds:
-        background = pygame.image.load("mars2.png").convert()
-        background = pygame.transform.scale(background, (WIDTH, HEIGHT))
-        background.set_alpha(206)
-        backgrounds[5] = background
-    else:
-        background = backgrounds[5]
+    background = load_background("mars2.png")
     screen.blit(background, (0, 0))
     global score, current_level
     # Draw target
@@ -331,14 +309,7 @@ def level5():
         #press key to continue
         reset_round()
 def level6():
-    global backgrounds
-    if 6 not in backgrounds:
-        background = pygame.image.load("jupiter.png").convert()
-        background = pygame.transform.scale(background, (WIDTH, HEIGHT))
-        background.set_alpha(206)
-        backgrounds[6] = background
-    else:
-        background = backgrounds[6]
+    background = load_background("jupiter.png")
     screen.blit(background, (0, 0))
     global score, current_level
     # Draw target
@@ -357,14 +328,7 @@ def level6():
         #press key to continue
         reset_round()
 def level7():
-    global backgrounds
-    if 7 not in backgrounds:
-        background = pygame.image.load("saturn.png").convert()
-        background = pygame.transform.scale(background, (WIDTH, HEIGHT))
-        background.set_alpha(206)
-        backgrounds[7] = background
-    else:
-        background = backgrounds[7]
+    background = load_background("saturn.png")
     screen.blit(background, (0, 0))
     global score, current_level
     # Draw target
@@ -383,14 +347,7 @@ def level7():
         #press key to continue
         reset_round()
 def level8():
-    global backgrounds
-    if 8 not in backgrounds:
-        background = pygame.image.load("uranus.png").convert()
-        background = pygame.transform.scale(background, (WIDTH, HEIGHT))
-        background.set_alpha(206)
-        backgrounds[8] = background
-    else:
-        background = backgrounds[8]
+    background = load_background("uranus.png")
     screen.blit(background, (0, 0))
     global score, current_level
     # Draw target
@@ -409,14 +366,7 @@ def level8():
         #press key to continue
         reset_round()
 def level9():
-    global backgrounds
-    if 9 not in backgrounds:
-        background = pygame.image.load("neptune.png").convert()
-        background = pygame.transform.scale(background, (WIDTH, HEIGHT))
-        background.set_alpha(206)
-        backgrounds[9] = background
-    else:
-        background = backgrounds[9]
+    background = load_background("neptune.png")
     screen.blit(background, (0, 0))
     global score, current_level
     # Draw target
@@ -437,14 +387,7 @@ def level9():
 
 
 def winlevel10():
-    global backgrounds
-    if 10 not in backgrounds:
-        background = pygame.image.load("mystery.png").convert()
-        background = pygame.transform.scale(background, (WIDTH, HEIGHT))
-        background.set_alpha(206)
-        backgrounds[10] = background
-    else:
-        background = backgrounds[10]
+    background = load_background("mystery.png")
     screen.blit(background, (0, 0))
     global score, current_level
     pygame.draw.rect(screen, (10, 100, 0), target_rect)
