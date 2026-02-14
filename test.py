@@ -89,8 +89,6 @@ def launch():
     vx = velocity * math.cos(rad)
     vy = -velocity * math.sin(rad)
     launched = True
-    test = ((2 * (ball_y)**2 * (target_rect.x - ball_x)**2 + (-drag_k * (velocity * math.cos(rad) - wind_x)) / mass) / 2*(target_rect.y  - ball_y))**(1/2)
-    print("Test:", test)
 
 
 
@@ -112,7 +110,7 @@ def update_physics():
 
     # Accelerations
     ax = drag_fx / mass
-    ay = (gravity + drag_fy) / mass
+    ay = gravity + (drag_fy / mass)
 
     # Update velocity
     vx += ax * DT
