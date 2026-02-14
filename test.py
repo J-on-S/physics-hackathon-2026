@@ -2,6 +2,7 @@ import pygame
 import random
 import math
 import sys
+import time
 
 pygame.init()
 
@@ -66,7 +67,7 @@ def reset_round():
 
     ball_radius = 10
     ball_x = 100
-    ball_y = GROUND_Y-200 #200 will be height of slingshot
+    ball_y = GROUND_Y-200 
     vx = 0
     vy = 0
     launched = False
@@ -89,6 +90,8 @@ def launch():
     vx = velocity * math.cos(rad)
     vy = -velocity * math.sin(rad)
     launched = True
+
+
 
 def update_physics():
     global target_rect
@@ -138,7 +141,8 @@ def check_hit():
 #predicted trajectory line
 
 def calculate_trajectory():
-    points = []
+    init_time = time.time()
+    global point
     rad = math.radians(angle)
     sim_vx = velocity * math.cos(rad)
     sim_vy = -velocity * math.sin(rad)
@@ -163,10 +167,9 @@ def calculate_trajectory():
 
         if sim_y >= HEIGHT:
             break
+        point = (int(sim_x), int(sim_y))
 
-        points.append((int(sim_x), int(sim_y)))
-
-    return points
+    return (int(sim_x), int(sim_y))
 
 images = {}
 def load_background(filename):
@@ -484,6 +487,14 @@ while running:
     #Draws ground
     pygame.draw.rect(screen, (0, 0, 0), platform)
     
+    #give final vy
+    #f_v_x = calculate_trajectory()[0]
+    #f_v_y = calculate_trajectory()[1]
+    #if point[0] > target_rect.x and point[1] > target_rect.y and point[0] < (target_rect.x + target_rect.width) and point[1] < HEIGHT:
+    #    final_v_x = font.render(f"Vfx = {f_v_x}, Vfy = {f_v_y}", True, (0,150,0))
+    #else:
+    #    final_v_x = font.render(f"Vfx = {f_v_x}, Vfy = {f_v_y}", True, (0,0,0))
+    #screen.blit(final_v_x, (WIDTH//2 - 60, 50))
     # Draw launcher line
     #if not launched:
     #    rad = math.radians(angle)
