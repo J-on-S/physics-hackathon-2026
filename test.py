@@ -31,46 +31,26 @@ def random_parameters():
 
     return gravity, mass, drag_k, wind_x
 
-gravity, mass, drag_k, wind_x = random_parameters()
-
-# -------------------------
-# PLAYER SETTINGS
-# -------------------------
-angle = 45
-velocity = 400
-score = 0
-
-# -------------------------
-# BALL STATE
-# -------------------------
-ball_radius = 10
-ball_x = 100
-ball_y = GROUND_Y
-vx = 0
-vy = 0
-launched = False
-
-# -------------------------
-# TARGET
-# -------------------------
-target_rect = pygame.Rect(
-    random.randint(600, 900),
-    GROUND_Y - 100,
-    40,
-    100
-)
 
 # -------------------------
 # FUNCTIONS
 # -------------------------
-
+global score
+score = 0
 def reset_round():
     global gravity, mass, drag_k, wind_x
     global ball_x, ball_y, vx, vy, launched
     global target_rect
+    global angle
+    global velocity
+    global ball_radius
+
+    angle = 45
+    velocity = 400
 
     gravity, mass, drag_k, wind_x = random_parameters()
 
+    ball_radius = 10
     ball_x = 100
     ball_y = GROUND_Y
     vx = 0
@@ -83,6 +63,8 @@ def reset_round():
         40,
         100
     )
+
+reset_round()
 
 def launch():
     global vx, vy, launched
@@ -119,9 +101,8 @@ def update_physics():
     ball_y += vy * DT
 
     # Ground collision
-    if ball_y >= GROUND_Y:
-        ball_y = GROUND_Y
-        launched = False
+    if ball_y >= HEIGHT:
+        reset_round()
 
 def check_hit():
     ball_rect = pygame.Rect(
@@ -155,7 +136,12 @@ def draw_ui():
         y_offset += 22
     
     scoretextobject = font.render(scoretext, True, (0,0,0))
-    screen.blit(scoretextobject, (WIDTH-scoretextobject.width-10, 10))
+    screen.blit(scoretextobject, (WIDTH-scoretextobject.get_width()-10, 10))
+
+#def updatescore():
+#    scoretext = f"Score: {score}"
+#    scoretextobject = font.render(scoretext, True, (0,0,0))
+#    screen.blit(scoretextobject, (WIDTH-scoretextobject.width-10, 10))
 
 # -------------------------
 # MAIN LOOP
@@ -211,9 +197,9 @@ while running:
     if check_hit():
         win_text = font.render("TARGET HIT!", True, (0,150,0))
         screen.blit(win_text, (WIDTH//2 - 60, 50))
-        pygame.time.delay(500)
-        score += 1
+        #press key to continue
 
+        score += 1
         reset_round()
 
     draw_ui()
