@@ -16,7 +16,6 @@ INIT_BALL_X = 100
 INIT_BALL_Y = GROUND_Y-200
 ball_radius = 10
 angle = 45
-velocity = 400
 score = 0
 
 redbirdskin = pygame.transform.scale(pygame.image.load("redbird.png"), (ball_radius*8, ball_radius*8))
@@ -46,8 +45,8 @@ def random_parameters():
     mass = random.uniform(0.5, 5)
     drag_k = random.uniform(0.0, 1.5)
     wind_x = random.uniform(-200, 200)
-
-    return gravity, mass, drag_k, wind_x
+    velocity = random.uniform(400,1200)
+    return gravity, mass, drag_k, wind_x, velocity
 
 
 # -------------------------
@@ -58,11 +57,11 @@ def reset_round():
     global target_rect
     global ball_x, ball_y, vx, vy, launched
     global vx, vy, launched
-    global gravity, mass, drag_k, wind_x
+    global gravity, mass, drag_k, wind_x, velocity
     angle = 45
     velocity = 400
 
-    gravity, mass, drag_k, wind_x = random_parameters()
+    gravity, mass, drag_k, wind_x, velocity = random_parameters()
 
     ball_radius = 10
     ball_x = 100
@@ -84,7 +83,7 @@ def launch():
     global target_rect
     global ball_x, ball_y, vx, vy, launched
     global vx, vy, launched
-    global gravity, mass, drag_k, wind_x
+    global gravity, mass, drag_k, wind_x, velocity
     rad = math.radians(angle)
     vx = velocity * math.cos(rad)
     vy = -velocity * math.sin(rad)
@@ -94,7 +93,7 @@ def update_physics():
     global target_rect
     global ball_x, ball_y, vx, vy, launched
     global vx, vy, launched
-    global gravity, mass, drag_k, wind_x
+    global gravity, mass, drag_k, wind_x, velocity
     if not launched:
         return
 
@@ -126,7 +125,7 @@ def check_hit():
     global target_rect
     global ball_x, ball_y, vx, vy, launched
     global vx, vy, launched
-    global gravity, mass, drag_k, wind_x
+    global gravity, mass, drag_k, wind_x, velocity
     ball_rect = pygame.Rect(
         ball_x - ball_radius,
         ball_y - ball_radius,
@@ -185,7 +184,7 @@ def draw_ui():
     global target_rect
     global ball_x, ball_y, vx, vy, launched
     global vx, vy, launched
-    global gravity, mass, drag_k, wind_x
+    global gravity, mass, drag_k, wind_x, velocity
     info = [
         f"Level: {current_level}",
         f"Gravity: {gravity:.1f}",
@@ -437,13 +436,8 @@ while running:
             angle += 1
         if keys[pygame.K_DOWN]:
             angle -= 1
-        if keys[pygame.K_RIGHT]:
-            velocity += 5
-        if keys[pygame.K_LEFT]:
-            velocity -= 5
 
     angle = max(5, min(85, angle))
-    velocity = max(50, min(1000, velocity))
     rad = math.radians(angle)
 
     update_physics()
