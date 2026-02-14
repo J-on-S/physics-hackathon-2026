@@ -195,8 +195,9 @@ def draw_ui():
 
 def level1():
     screen.fill((128, 128, 128))
-    background = pygame.image.load("earth.png").convert()
+    background = pygame.image.load("earth.jpg").convert()
     background = pygame.transform.scale(background, (WIDTH, HEIGHT))
+    background.set_alpha(128)
     global score, current_level
     # Draw target
     pygame.draw.rect(screen, (200, 0, 0), target_rect)
