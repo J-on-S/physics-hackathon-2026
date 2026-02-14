@@ -199,6 +199,10 @@ def draw_ui():
     screen.blit(scoretextobject, (WIDTH-scoretextobject.get_width()-10, 10))
 
 def level1():
+    background = pygame.image.load("mercury.png").convert()
+    background = pygame.transform.scale(background, (WIDTH, HEIGHT))
+    background.set_alpha(206)
+    screen.blit(background, (0, 0))
     global score, current_level
     # Draw target
     pygame.draw.rect(screen, (200, 0, 0), target_rect)
@@ -217,7 +221,10 @@ def level1():
         reset_round()
 
 def level2():
-    screen.fill((255, 128, 0))
+    background = pygame.image.load("venus2.png").convert()
+    background = pygame.transform.scale(background, (WIDTH, HEIGHT))
+    background.set_alpha(206)
+    screen.blit(background, (0, 0))
     global score, current_level
     # Draw target
     pygame.draw.rect(screen, (10, 100, 0), target_rect)
@@ -236,7 +243,7 @@ def level2():
         reset_round()
 
 def level3():
-    background = pygame.image.load("earth.png").convert()
+    background = pygame.image.load("earth2.png").convert()
     background = pygame.transform.scale(background, (WIDTH, HEIGHT))
     background.set_alpha(206)
     screen.blit(background, (0, 0))
@@ -257,7 +264,10 @@ def level3():
         #press key to continue
         reset_round()
 def level4():
-    screen.fill((192, 192, 192))
+    background = pygame.image.load("moon2.png").convert()
+    background = pygame.transform.scale(background, (WIDTH, HEIGHT))
+    background.set_alpha(206)
+    screen.blit(background, (0, 0))
     global score, current_level
     # Draw target
     pygame.draw.rect(screen, (10, 100, 0), target_rect)
@@ -275,7 +285,7 @@ def level4():
         #press key to continue
         reset_round()
 def level5():
-    background = pygame.image.load("mars.png").convert()
+    background = pygame.image.load("mars2.png").convert()
     background = pygame.transform.scale(background, (WIDTH, HEIGHT))
     background.set_alpha(206)
     screen.blit(background, (0, 0))
@@ -296,7 +306,10 @@ def level5():
         #press key to continue
         reset_round()
 def level6():
-    screen.fill((153, 73, 0))
+    background = pygame.image.load("jupiter.png").convert()
+    background = pygame.transform.scale(background, (WIDTH, HEIGHT))
+    background.set_alpha(206)
+    screen.blit(background, (0, 0))
     global score, current_level
     # Draw target
     pygame.draw.rect(screen, (10, 100, 0), target_rect)
@@ -314,7 +327,10 @@ def level6():
         #press key to continue
         reset_round()
 def level7():
-    screen.fill((153, 153, 0))
+    background = pygame.image.load("saturn.png").convert()
+    background = pygame.transform.scale(background, (WIDTH, HEIGHT))
+    background.set_alpha(206)
+    screen.blit(background, (0, 0))
     global score, current_level
     # Draw target
     pygame.draw.rect(screen, (10, 100, 0), target_rect)
@@ -332,7 +348,10 @@ def level7():
         #press key to continue
         reset_round()
 def level8():
-    screen.fill((0, 204, 204))
+    background = pygame.image.load("uranus.png").convert()
+    background = pygame.transform.scale(background, (WIDTH, HEIGHT))
+    background.set_alpha(206)
+    screen.blit(background, (0, 0))
     global score, current_level
     # Draw target
     pygame.draw.rect(screen, (10, 100, 0), target_rect)
@@ -350,7 +369,10 @@ def level8():
         #press key to continue
         reset_round()
 def level9():
-    screen.fill((0, 0, 153))
+    background = pygame.image.load("neptune.png").convert()
+    background = pygame.transform.scale(background, (WIDTH, HEIGHT))
+    background.set_alpha(206)
+    screen.blit(background, (0, 0))
     global score, current_level
     # Draw target
     pygame.draw.rect(screen, (10, 100, 0), target_rect)
@@ -370,7 +392,10 @@ def level9():
 
 
 def winlevel10():
-    screen.fill((255, 255, 255))
+    background = pygame.image.load("mystery.png").convert()
+    background = pygame.transform.scale(background, (WIDTH, HEIGHT))
+    background.set_alpha(206)
+    screen.blit(background, (0, 0))
     global score, current_level
     pygame.draw.rect(screen, (10, 100, 0), target_rect)
 
@@ -380,8 +405,8 @@ def winlevel10():
         pygame.display.flip()
         pygame.time.delay(10000)
         
-#level1, level2,level4, level6, level7, level8, level9, winlevel10
-LEVELS = [ level3,level5]
+
+LEVELS = [ level1, level2, level3,level4, level5,level6,level7, level8, level9]
 current_level = 1
 
 #def updatescore():
