@@ -406,6 +406,10 @@ while running:
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_SPACE and not launched:
                 launch()
+            if event.key == pygame.K_n:
+                current_level += 1
+                if current_level > len(LEVELS):
+                    current_level = len(LEVELS)
     
     keys = pygame.key.get_pressed()
     if keys[pygame.K_r] or (ball_x > WIDTH):
