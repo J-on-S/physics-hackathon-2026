@@ -342,25 +342,20 @@ def level9():
         current_level += 1 # Move back to level 1
         #press key to continue
         reset_round()
-def level10():
+
+
+def winlevel10():
     global score, current_level
-    # Draw target
     pygame.draw.rect(screen, (10, 100, 0), target_rect)
 
-    # Draw ball
-    #pygame.draw.circle(screen, (0, 100, 255), (int(ball_x), int(ball_y)), ball_radius)
-
     if check_hit():
-        win_text = font.render("TARGET HIT!", True, (0,150,0))
-        screen.blit(win_text, (WIDTH//2 - 60, 50))
-        pygame.display.flip() # Show the win text for 500ms
-        pygame.time.delay(500)
-        score += 1
-        current_level += 1 # Move back to level 1
-        #press key to continue
-        reset_round()
+        youwin = font.render("CONGRATULATIONS! YOU HAVE COMPLETED THE GAME!", True, (0, 0, 0))
+        screen.blit(youwin, (WIDTH//2 - 60,50))
+        pygame.display.flip()
+        pygame.time.delay(10000)
+        
 
-LEVELS = [level1, level2, level3, level4, level5, level6, level7, level8, level9, level10]
+LEVELS = [level1, level2, level3, level4, level5, level6, level7, level8, level9, winlevel10]
 current_level = 1
 
 #def updatescore():
