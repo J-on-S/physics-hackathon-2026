@@ -163,6 +163,7 @@ def draw_ui():
     global vx, vy, launched
     global gravity, mass, drag_k, wind_x
     info = [
+        f"Level: {current_level}",
         f"Gravity: {gravity:.1f}",
         f"Mass: {mass:.2f}",
         f"Drag: {drag_k:.2f}",
@@ -185,6 +186,51 @@ def draw_ui():
     
     scoretextobject = font.render(scoretext, True, (0,0,0))
     screen.blit(scoretextobject, (WIDTH-scoretextobject.get_width()-10, 10))
+
+def level1():
+    global score, current_level
+    # Draw ground
+    pygame.draw.line(screen, (0,0,0), (0, GROUND_Y), (WIDTH, GROUND_Y), 2)
+
+    # Draw target
+    pygame.draw.rect(screen, (200, 0, 0), target_rect)
+
+    # Draw ball
+    #pygame.draw.circle(screen, (0, 100, 255), (int(ball_x), int(ball_y)), ball_radius)
+
+    if check_hit():
+        win_text = font.render("TARGET HIT!", True, (0,150,0))
+        screen.blit(win_text, (WIDTH//2 - 60, 50))
+        pygame.display.flip() # Show the win text for 500ms
+        pygame.time.delay(500)
+        score += 1
+        current_level = 2 # Move to level 2
+        #press key to continue
+        reset_round()
+
+def level2():
+    global score, current_level
+    # Draw ground
+    pygame.draw.line(screen, (0,0,0), (0, GROUND_Y), (WIDTH, GROUND_Y), 2)
+
+    # Draw target
+    pygame.draw.rect(screen, (10, 100, 0), target_rect)
+
+    # Draw ball
+    #pygame.draw.circle(screen, (0, 100, 255), (int(ball_x), int(ball_y)), ball_radius)
+
+    if check_hit():
+        win_text = font.render("TARGET HIT!", True, (0,150,0))
+        screen.blit(win_text, (WIDTH//2 - 60, 50))
+        pygame.display.flip() # Show the win text for 500ms
+        pygame.time.delay(500)
+        score += 1
+        current_level = 1 # Move back to level 1
+        #press key to continue
+        reset_round()
+
+LEVELS = [level1, level2]
+current_level = 1
 
 #def updatescore():
 #    scoretext = f"Score: {score}"
@@ -226,14 +272,9 @@ while running:
 
     update_physics()
 
-    # Draw ground
-    pygame.draw.line(screen, (0,0,0), (0, GROUND_Y), (WIDTH, GROUND_Y), 2)
+    # Run level-specific logic
+    LEVELS[current_level - 1]()
 
-    # Draw target
-    pygame.draw.rect(screen, (200, 0, 0), target_rect)
-
-    # Draw ball
-    #pygame.draw.circle(screen, (0, 100, 255), (int(ball_x), int(ball_y)), ball_radius)
     screen.blit(redbirdskin, (int(ball_x) - (redbirdskin.get_width()/2), int(ball_y) - (redbirdskin.get_height()/2)))
 
     # Draw launcher line
@@ -252,14 +293,6 @@ while running:
                 end = trajectory_points[i+1]
                 pygame.draw.line(screen, (150, 150, 150), start, end, 2)
 
-    if check_hit():
-        win_text = font.render("TARGET HIT!", True, (0,150,0))
-        screen.blit(win_text, (WIDTH//2 - 60, 50))
-        pygame.display.flip() # Show the win text for 500ms
-        pygame.time.delay(500)
-        score += 1
-        #press key to continue
-        reset_round()
 
     draw_ui()
 
