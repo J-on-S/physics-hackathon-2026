@@ -210,9 +210,6 @@ def level1():
 
 def level2():
     global score, current_level
-    # Draw ground
-    pygame.draw.line(screen, (0,0,0), (0, GROUND_Y), (WIDTH, GROUND_Y), 2)
-
     # Draw target
     pygame.draw.rect(screen, (10, 100, 0), target_rect)
 
