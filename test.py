@@ -38,6 +38,7 @@ gravity, mass, drag_k, wind_x = random_parameters()
 # -------------------------
 angle = 45
 velocity = 400
+score = 0
 
 # -------------------------
 # BALL STATE
@@ -145,11 +146,16 @@ def draw_ui():
         "R = Reset"
     ]
 
+    scoretext = f"Score: {score}"
+
     y_offset = 10
     for line in info:
         text = font.render(line, True, (0,0,0))
         screen.blit(text, (10, y_offset))
         y_offset += 22
+    
+    scoretextobject = font.render(scoretext, True, (0,0,0))
+    screen.blit(scoretextobject, (WIDTH-scoretextobject.width-10, 10))
 
 # -------------------------
 # MAIN LOOP
@@ -166,11 +172,10 @@ while running:
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_SPACE and not launched:
                 launch()
+    
     keys = pygame.key.get_pressed()
     if keys[pygame.K_r] or (ball_x > WIDTH):
         reset_round()
-
-    keys = pygame.key.get_pressed()
 
     if not launched:
         if keys[pygame.K_UP]:
@@ -206,6 +211,10 @@ while running:
     if check_hit():
         win_text = font.render("TARGET HIT!", True, (0,150,0))
         screen.blit(win_text, (WIDTH//2 - 60, 50))
+        pygame.time.delay(500)
+        score += 1
+
+        reset_round()
 
     draw_ui()
 
