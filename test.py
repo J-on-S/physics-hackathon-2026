@@ -17,13 +17,17 @@ INIT_BALL_X = 100
 INIT_BALL_Y = GROUND_Y-200
 ball_radius = 10
 angle = 45
-velocity = 400
 score = 0
 
 redbirdskin = pygame.transform.scale(pygame.image.load("redbird.png"), (ball_radius*8, ball_radius*8))
 cannon_body = pygame.transform.scale(pygame.image.load("cannon_body.png"), (ball_radius*10, ball_radius*10))
 cannon_wheel = pygame.transform.scale(pygame.image.load("cannon_wheel.png"), (ball_radius*5, ball_radius*5))
 platform = pygame.Rect(0, INIT_BALL_Y + cannon_wheel.get_height(), 200, 300)
+
+pygame.mixer.init()
+# Music: https://pixabay.com/music/search/game%20background/
+pygame.mixer.music.load('backgroundmusicforvideos-gaming-game-minecraft-background-music-372242.mp3')
+pygame.mixer.music.play(-1)
 
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Physics Hackathon Prototype")
@@ -32,8 +36,7 @@ clock = pygame.time.Clock()
 font = pygame.font.SysFont("Arial", 18)
 
 GROUND_Y = HEIGHT - 50
-FLOOR_HEIGHT = 80
-floor_rect = pygame.Rect(0, HEIGHT - FLOOR_HEIGHT, WIDTH, FLOOR_HEIGHT)
+
 # -------------------------
 # RANDOM PHYSICS PARAMETERS
 # -------------------------
@@ -43,8 +46,8 @@ def random_parameters():
     mass = random.uniform(0.5, 5)
     drag_k = random.uniform(0.0, 1.5)
     wind_x = random.uniform(-200, 200)
-
-    return gravity, mass, drag_k, wind_x
+    velocity = random.uniform(400,1200)
+    return gravity, mass, drag_k, wind_x, velocity
 
 
 # -------------------------
@@ -55,11 +58,11 @@ def reset_round():
     global target_rect
     global ball_x, ball_y, vx, vy, launched
     global vx, vy, launched
-    global gravity, mass, drag_k, wind_x
+    global gravity, mass, drag_k, wind_x, velocity
     angle = 45
     velocity = 400
 
-    gravity, mass, drag_k, wind_x = random_parameters()
+    gravity, mass, drag_k, wind_x, velocity = random_parameters()
 
     ball_radius = 10
     ball_x = 100
@@ -81,7 +84,7 @@ def launch():
     global target_rect
     global ball_x, ball_y, vx, vy, launched
     global vx, vy, launched
-    global gravity, mass, drag_k, wind_x
+    global gravity, mass, drag_k, wind_x, velocity
     rad = math.radians(angle)
     vx = velocity * math.cos(rad)
     vy = -velocity * math.sin(rad)
@@ -95,7 +98,7 @@ def update_physics():
     global target_rect
     global ball_x, ball_y, vx, vy, launched
     global vx, vy, launched
-    global gravity, mass, drag_k, wind_x
+    global gravity, mass, drag_k, wind_x, velocity
     if not launched:
         return
 
@@ -127,7 +130,7 @@ def check_hit():
     global target_rect
     global ball_x, ball_y, vx, vy, launched
     global vx, vy, launched
-    global gravity, mass, drag_k, wind_x
+    global gravity, mass, drag_k, wind_x, velocity
     ball_rect = pygame.Rect(
         ball_x - ball_radius,
         ball_y - ball_radius,
@@ -169,11 +172,24 @@ def calculate_trajectory():
 
     return (int(sim_x), int(sim_y))
 
+images = {}
+def load_background(filename):
+    global images
+    if filename not in images:
+        background = pygame.image.load(filename).convert()
+        background = pygame.transform.scale(background, (WIDTH, HEIGHT))
+        background.set_alpha(206)
+        images[filename] = background
+        return background
+    else:
+        return images[filename]
+
+
 def draw_ui():
     global target_rect
     global ball_x, ball_y, vx, vy, launched
     global vx, vy, launched
-    global gravity, mass, drag_k, wind_x
+    global gravity, mass, drag_k, wind_x, velocity
     info = [
         f"Level: {current_level}",
         f"Gravity: {gravity:.1f}",
@@ -200,8 +216,8 @@ def draw_ui():
     screen.blit(scoretextobject, (WIDTH-scoretextobject.get_width()-10, 10))
 
 def level1():
-    screen.fill((128, 128, 128))
-    pygame.draw.rect(screen, (80, 80, 80), floor_rect)
+    background = load_background("mercury.png")
+    screen.blit(background, (0, 0))
     global score, current_level
     # Draw target
     pygame.draw.rect(screen, (200, 0, 0), target_rect)
@@ -220,8 +236,8 @@ def level1():
         reset_round()
 
 def level2():
-    screen.fill((255, 128, 0))
-    pygame.draw.rect(screen, (153, 76, 0), floor_rect)
+    background = load_background("venus2.png")
+    screen.blit(background, (0, 0))
     global score, current_level
     # Draw target
     pygame.draw.rect(screen, (10, 100, 0), target_rect)
@@ -240,8 +256,8 @@ def level2():
         reset_round()
 
 def level3():
-    screen.fill((0, 128, 255))
-    pygame.draw.rect(screen, (0, 153, 0), floor_rect)
+    background = load_background("earth2.png")
+    screen.blit(background, (0, 0))
     global score, current_level
     # Draw target
     pygame.draw.rect(screen, (10, 100, 0), target_rect)
@@ -259,8 +275,8 @@ def level3():
         #press key to continue
         reset_round()
 def level4():
-    screen.fill((192, 192, 192))
-    pygame.draw.rect(screen, (160, 160, 160), floor_rect)
+    background = load_background("moon2.png")
+    screen.blit(background, (0, 0))
     global score, current_level
     # Draw target
     pygame.draw.rect(screen, (10, 100, 0), target_rect)
@@ -278,8 +294,8 @@ def level4():
         #press key to continue
         reset_round()
 def level5():
-    screen.fill((255, 0, 0))
-    pygame.draw.rect(screen, (153, 0, 0), floor_rect)
+    background = load_background("mars2.png")
+    screen.blit(background, (0, 0))
     global score, current_level
     # Draw target
     pygame.draw.rect(screen, (10, 100, 0), target_rect)
@@ -297,7 +313,8 @@ def level5():
         #press key to continue
         reset_round()
 def level6():
-    screen.fill((153, 73, 0))
+    background = load_background("jupiter.png")
+    screen.blit(background, (0, 0))
     global score, current_level
     # Draw target
     pygame.draw.rect(screen, (10, 100, 0), target_rect)
@@ -315,7 +332,8 @@ def level6():
         #press key to continue
         reset_round()
 def level7():
-    screen.fill((153, 153, 0))
+    background = load_background("saturn.png")
+    screen.blit(background, (0, 0))
     global score, current_level
     # Draw target
     pygame.draw.rect(screen, (10, 100, 0), target_rect)
@@ -333,7 +351,8 @@ def level7():
         #press key to continue
         reset_round()
 def level8():
-    screen.fill((0, 204, 204))
+    background = load_background("uranus.png")
+    screen.blit(background, (0, 0))
     global score, current_level
     # Draw target
     pygame.draw.rect(screen, (10, 100, 0), target_rect)
@@ -351,7 +370,8 @@ def level8():
         #press key to continue
         reset_round()
 def level9():
-    screen.fill((0, 0, 153))
+    background = load_background("neptune.png")
+    screen.blit(background, (0, 0))
     global score, current_level
     # Draw target
     pygame.draw.rect(screen, (10, 100, 0), target_rect)
@@ -371,8 +391,8 @@ def level9():
 
 
 def winlevel10():
-    screen.fill((255, 255, 255))
-    pygame.draw.rect(screen, (80, 80, 80), floor_rect)
+    background = load_background("mystery.png")
+    screen.blit(background, (0, 0))
     global score, current_level
     pygame.draw.rect(screen, (10, 100, 0), target_rect)
 
@@ -383,7 +403,8 @@ def winlevel10():
         pygame.time.delay(10000)
         
 
-LEVELS = [level1, level2, level3, level4, level5, level6, level7, level8, level9, winlevel10]
+backgrounds = {}
+LEVELS = [ level1, level2, level3,level4, level5,level6,level7, level8, level9,winlevel10]
 current_level = 1
 
 #def updatescore():
@@ -406,6 +427,10 @@ while running:
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_SPACE and not launched:
                 launch()
+            if event.key == pygame.K_n:
+                current_level += 1
+                if current_level > len(LEVELS):
+                    current_level = len(LEVELS)
     
     keys = pygame.key.get_pressed()
     if keys[pygame.K_r] or (ball_x > WIDTH):
@@ -416,13 +441,8 @@ while running:
             angle += 1
         if keys[pygame.K_DOWN]:
             angle -= 1
-        if keys[pygame.K_RIGHT]:
-            velocity += 5
-        if keys[pygame.K_LEFT]:
-            velocity -= 5
 
     angle = max(5, min(85, angle))
-    velocity = max(50, min(1000, velocity))
     rad = math.radians(angle)
 
     update_physics()
