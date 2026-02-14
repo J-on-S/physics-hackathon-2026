@@ -25,8 +25,7 @@ clock = pygame.time.Clock()
 font = pygame.font.SysFont("Arial", 18)
 
 GROUND_Y = HEIGHT - 50
-FLOOR_HEIGHT = 80
-floor_rect = pygame.Rect(0, HEIGHT - FLOOR_HEIGHT, WIDTH, FLOOR_HEIGHT)
+
 # -------------------------
 # RANDOM PHYSICS PARAMETERS
 # -------------------------
@@ -190,7 +189,8 @@ def draw_ui():
 
 def level1():
     screen.fill((128, 128, 128))
-    pygame.draw.rect(screen, (80, 80, 80), floor_rect)
+    background = pygame.image.load("earth.png").convert()
+    background = pygame.transform.scale(background, (WIDTH, HEIGHT))
     global score, current_level
     # Draw target
     pygame.draw.rect(screen, (200, 0, 0), target_rect)
