@@ -166,9 +166,9 @@ while running:
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_SPACE and not launched:
                 launch()
-
-            if event.key == pygame.K_r:
-                reset_round()
+    keys = pygame.key.get_pressed()
+    if keys[pygame.K_r] or (ball_x > WIDTH):
+        reset_round()
 
     keys = pygame.key.get_pressed()
 
