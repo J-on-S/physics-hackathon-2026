@@ -11,20 +11,23 @@ pygame.init()
 WIDTH, HEIGHT = 1000, 600
 FPS = 60
 DT = 1 / FPS
+GROUND_Y = HEIGHT - 50
+INIT_BALL_X = 100
+INIT_BALL_Y = GROUND_Y-200
 ball_radius = 10
 angle = 45
 velocity = 400
 score = 0
 
-redbirdskin = pygame.transform.scale(pygame.image.load("redbird.png"), (ball_radius*10, ball_radius*10))
+redbirdskin = pygame.transform.scale(pygame.image.load("redbird.png"), (ball_radius*8, ball_radius*8))
+cannon_body = pygame.transform.scale(pygame.image.load("cannon_body.png"), (ball_radius*10, ball_radius*10))
+cannon_wheel = pygame.transform.scale(pygame.image.load("cannon_wheel.png"), (ball_radius*5, ball_radius*5))
 
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Physics Hackathon Prototype")
 
 clock = pygame.time.Clock()
 font = pygame.font.SysFont("Arial", 18)
-
-GROUND_Y = HEIGHT - 50
 
 # -------------------------
 # RANDOM PHYSICS PARAMETERS
@@ -263,14 +266,32 @@ while running:
 
     angle = max(5, min(85, angle))
     velocity = max(50, min(1000, velocity))
+    rad = math.radians(angle)
 
     update_physics()
 
     # Run level-specific logic
     LEVELS[current_level - 1]()
 
-    screen.blit(redbirdskin, (int(ball_x) - (redbirdskin.get_width()/2), int(ball_y) - (redbirdskin.get_height()/2)))
+    #Draws bird
+    if not launched:
+        redbirdskin.set_alpha(128) 
+        bird_x = (ball_x - (redbirdskin.get_width()/2))+ 60 * math.cos(rad)
+        bird_y = (ball_y - (redbirdskin.get_height()/2)) - 60 * math.sin(rad)
+        screen.blit(redbirdskin, (bird_x, bird_y))
+    else: 
+        redbirdskin.set_alpha(256)
+        bird_x = int(ball_x) - (redbirdskin.get_width()/2)
+        bird_y = int(ball_y) - (redbirdskin.get_height()/2)
+        screen.blit(redbirdskin, (bird_x, bird_y))
 
+    #Draws cannon
+    cannon_body = pygame.transform.rotate(pygame.transform.scale(pygame.image.load("cannon_body.png"), (ball_radius*10, ball_radius*10)), angle)
+    cannon_x = (INIT_BALL_X - (cannon_body.get_width()/2))
+    cannon_y = (INIT_BALL_Y - (cannon_body.get_height()/2))
+    screen.blit(cannon_body, (cannon_x, cannon_y))
+    screen.blit(cannon_wheel, (INIT_BALL_X - (cannon_wheel.get_width()/2), INIT_BALL_Y + (cannon_wheel.get_height()/3)))
+    
     # Draw launcher line
     #if not launched:
     #    rad = math.radians(angle)
