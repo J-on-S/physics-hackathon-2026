@@ -25,7 +25,8 @@ clock = pygame.time.Clock()
 font = pygame.font.SysFont("Arial", 18)
 
 GROUND_Y = HEIGHT - 50
-
+FLOOR_HEIGHT = 80
+floor_rect = pygame.Rect(0, HEIGHT - FLOOR_HEIGHT, WIDTH, FLOOR_HEIGHT)
 # -------------------------
 # RANDOM PHYSICS PARAMETERS
 # -------------------------
@@ -188,6 +189,8 @@ def draw_ui():
     screen.blit(scoretextobject, (WIDTH-scoretextobject.get_width()-10, 10))
 
 def level1():
+    screen.fill((128, 128, 128))
+    pygame.draw.rect(screen, (80, 80, 80), floor_rect)
     global score, current_level
     # Draw target
     pygame.draw.rect(screen, (200, 0, 0), target_rect)
@@ -206,6 +209,8 @@ def level1():
         reset_round()
 
 def level2():
+    screen.fill((255, 128, 0))
+    pygame.draw.rect(screen, (153, 76, 0), floor_rect)
     global score, current_level
     # Draw target
     pygame.draw.rect(screen, (10, 100, 0), target_rect)
@@ -224,6 +229,8 @@ def level2():
         reset_round()
 
 def level3():
+    screen.fill((0, 128, 255))
+    pygame.draw.rect(screen, (0, 153, 0), floor_rect)
     global score, current_level
     # Draw target
     pygame.draw.rect(screen, (10, 100, 0), target_rect)
@@ -241,6 +248,8 @@ def level3():
         #press key to continue
         reset_round()
 def level4():
+    screen.fill((192, 192, 192))
+    pygame.draw.rect(screen, (160, 160, 160), floor_rect)
     global score, current_level
     # Draw target
     pygame.draw.rect(screen, (10, 100, 0), target_rect)
@@ -258,6 +267,8 @@ def level4():
         #press key to continue
         reset_round()
 def level5():
+    screen.fill((255, 0, 0))
+    pygame.draw.rect(screen, (153, 0, 0), floor_rect)
     global score, current_level
     # Draw target
     pygame.draw.rect(screen, (10, 100, 0), target_rect)
@@ -275,6 +286,7 @@ def level5():
         #press key to continue
         reset_round()
 def level6():
+    screen.fill((153, 73, 0))
     global score, current_level
     # Draw target
     pygame.draw.rect(screen, (10, 100, 0), target_rect)
@@ -292,6 +304,7 @@ def level6():
         #press key to continue
         reset_round()
 def level7():
+    screen.fill((153, 153, 0))
     global score, current_level
     # Draw target
     pygame.draw.rect(screen, (10, 100, 0), target_rect)
@@ -309,6 +322,7 @@ def level7():
         #press key to continue
         reset_round()
 def level8():
+    screen.fill((0, 204, 204))
     global score, current_level
     # Draw target
     pygame.draw.rect(screen, (10, 100, 0), target_rect)
@@ -326,6 +340,7 @@ def level8():
         #press key to continue
         reset_round()
 def level9():
+    screen.fill((0, 0, 153))
     global score, current_level
     # Draw target
     pygame.draw.rect(screen, (10, 100, 0), target_rect)
@@ -345,6 +360,8 @@ def level9():
 
 
 def winlevel10():
+    screen.fill((255, 255, 255))
+    pygame.draw.rect(screen, (80, 80, 80), floor_rect)
     global score, current_level
     pygame.draw.rect(screen, (10, 100, 0), target_rect)
 
