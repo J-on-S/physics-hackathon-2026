@@ -55,14 +55,14 @@ def reset_round():
 
     ball_radius = 10
     ball_x = 100
-    ball_y = GROUND_Y
+    ball_y = GROUND_Y-200 #200 will be height of slingshot
     vx = 0
     vy = 0
     launched = False
 
     target_rect = pygame.Rect(
         random.randint(600, 900),
-        GROUND_Y - 100,
+        HEIGHT - 100,
         40,
         100
     )
@@ -227,7 +227,7 @@ while running:
     update_physics()
 
     # Draw ground
-    pygame.draw.line(screen, (0,0,0), (0, GROUND_Y), (WIDTH, GROUND_Y), 2)
+    #pygame.draw.line(screen, (0,0,0), (0, GROUND_Y), (WIDTH, GROUND_Y), 2)
 
     # Draw target
     pygame.draw.rect(screen, (200, 0, 0), target_rect)
@@ -237,11 +237,11 @@ while running:
     screen.blit(redbirdskin, (int(ball_x) - (redbirdskin.get_width()/2), int(ball_y) - (redbirdskin.get_height()/2)))
 
     # Draw launcher line
-    if not launched:
-        rad = math.radians(angle)
-        lx = ball_x + 40 * math.cos(rad)
-        ly = ball_y - 40 * math.sin(rad)
-        pygame.draw.line(screen, (0,0,0), (ball_x, ball_y), (lx, ly), 3)
+    #if not launched:
+    #    rad = math.radians(angle)
+    #    lx = ball_x + 40 * math.cos(rad)
+    #    ly = ball_y - 40 * math.sin(rad)
+    #    pygame.draw.line(screen, (0,0,0), (ball_x, ball_y), (lx, ly), 3)
 
     # Draw predicted trajectory as a dotted line
     if not launched:
