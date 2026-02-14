@@ -113,6 +113,39 @@ def check_hit():
     )
     return ball_rect.colliderect(target_rect)
 
+#predicted trajectory line
+
+def calculate_trajectory():
+    points = []
+    rad = math.radians(angle)
+    sim_vx = velocity * math.cos(rad)
+    sim_vy = -velocity * math.sin(rad)
+    sim_x = ball_x
+    sim_y = ball_y
+
+    for _ in range(300):  # number of simulation steps
+        rel_vx = sim_vx - wind_x
+        rel_vy = sim_vy
+
+        drag_fx = -drag_k * rel_vx
+        drag_fy = -drag_k * rel_vy
+
+        ax = drag_fx / mass
+        ay = gravity + (drag_fy / mass)
+
+        sim_vx += ax * DT
+        sim_vy += ay * DT
+
+        sim_x += sim_vx * DT
+        sim_y += sim_vy * DT
+
+        if sim_y >= HEIGHT:
+            break
+
+        points.append((int(sim_x), int(sim_y)))
+
+    return points
+
 def draw_ui():
     info = [
         f"Gravity: {gravity:.1f}",
@@ -193,6 +226,15 @@ while running:
         lx = ball_x + 40 * math.cos(rad)
         ly = ball_y - 40 * math.sin(rad)
         pygame.draw.line(screen, (0,0,0), (ball_x, ball_y), (lx, ly), 3)
+
+    # Draw predicted trajectory as a dotted line
+    if not launched:
+        trajectory_points = calculate_trajectory()
+        if len(trajectory_points) > 1:
+            for i in range(0, len(trajectory_points)-1, 3):  # skip every 3 points to create gaps
+                start = trajectory_points[i]
+                end = trajectory_points[i+1]
+                pygame.draw.line(screen, (150, 150, 150), start, end, 2)
 
     if check_hit():
         win_text = font.render("TARGET HIT!", True, (0,150,0))
