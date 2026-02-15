@@ -273,35 +273,32 @@ def find_target_point_for_angle(test_angle, velocity, gravity, wind_x, drag_k, m
     t = 0.0
 
     tw, th = 40, 100
-
     best_rect = None
     best_t = None
     best_dx = -1e9
 
-    for _ in range(2000):
-        # drag (wind affects relative x speed)
-        #rel_vx = sim_vx - wind_x
-        #rel_vy = sim_vy
+    for _ in range(4000):
+        # ✅ SAME drag + wind model as update_physics
+        rel_vx = sim_vx - wind_x
+        rel_vy = sim_vy
 
-        #drag_fx = -drag_k * rel_vx
-        #drag_fy = -drag_k * rel_vy
+        drag_fx = -drag_k * rel_vx
+        drag_fy = -drag_k * rel_vy
 
-        #ax = drag_fx / mass
-        ay = gravity #+ (drag_fy / mass)
+        ax = drag_fx / mass
+        ay = gravity + (drag_fy / mass)
 
-        #sim_vx += ax * DT
+        sim_vx += ax * DT
         sim_vy += ay * DT
         sim_x += sim_vx * DT
         sim_y += sim_vy * DT
         t += DT
 
-        # stop at ground
         if sim_y >= GROUND_Y:
             break
 
         dx = sim_x - INIT_BALL_X
 
-        # check if we can place a target centered here
         left = int(sim_x - tw / 2)
         top  = int(sim_y - th / 2)
 
@@ -379,7 +376,7 @@ def reset_round():
     mass = random.uniform(0.5, 5)
 
     if game_mode == MODE_DRAG_TRIAL:
-        drag_k = random.uniform(0.0, 1.5)
+        drag_k = random.uniform(0.02, 0.35)
         wind_x = random.uniform(-200, 200)
     else:
         # Mode 2: turn off drag & wind
@@ -471,36 +468,36 @@ def update_physics():
 
     t_since_launch += DT
 
-    # stop after the "expected" time window
-    if t_since_launch > flight_time:
+    # safety timeout (prevents infinite flight)
+    if t_since_launch > 10.0:
         launched = False
-        vx = 0
-        vy = 0
         reset_round()
         return
 
     if game_mode == MODE_DRAG_TRIAL:
-        # drag with wind-relative x speed
+        # relative velocity against wind (wind only along x)
         rel_vx = vx - wind_x
         rel_vy = vy
 
+        # linear drag
         drag_fx = -drag_k * rel_vx
         drag_fy = -drag_k * rel_vy
 
         ax = drag_fx / mass
         ay = gravity + (drag_fy / mass)
     else:
-        # Mode 2: pure projectile motion
         ax = 0.0
         ay = gravity
 
-    #vx += ax * DT
+    # ✅ APPLY both
+    vx += ax * DT
     vy += ay * DT
 
     ball_x += vx * DT
     ball_y += vy * DT
 
-    if ball_y >= GROUND_Y:
+    # reset conditions
+    if ball_y >= GROUND_Y or ball_x < -200 or ball_x > WIDTH + 200 or ball_y > HEIGHT + 200:
         launched = False
         reset_round()
 
@@ -519,7 +516,7 @@ def check_hit():
 
 #predicted trajectory line
 
-def calculate_trajectory_points(max_steps=300):
+def calculate_trajectory_points(max_steps=600):
     points = []
 
     rad = math.radians(angle)
@@ -529,7 +526,6 @@ def calculate_trajectory_points(max_steps=300):
     sim_y = ball_y
 
     for _ in range(max_steps):
-        # Mode-aware physics for preview
         if game_mode == MODE_DRAG_TRIAL:
             rel_vx = sim_vx - wind_x
             rel_vy = sim_vy
@@ -543,15 +539,15 @@ def calculate_trajectory_points(max_steps=300):
             ax = 0.0
             ay = gravity
 
-        #sim_vx += ax * DT
+        # ✅ APPLY both
+        sim_vx += ax * DT
         sim_vy += ay * DT
         sim_x += sim_vx * DT
         sim_y += sim_vy * DT
 
         points.append((int(sim_x), int(sim_y)))
 
-        # stop conditions
-        if sim_y >= GROUND_Y or sim_x < -200 or sim_x > WIDTH + 200:
+        if sim_y >= GROUND_Y or sim_x < -200 or sim_x > WIDTH + 200 or sim_y > HEIGHT + 200:
             break
 
     return points
