@@ -583,7 +583,7 @@ def draw_ui():
     # ... (inside your game loop)
 
 # Create a solid surface
-    solid_surface = pygame.Surface((450, 175))
+    solid_surface = pygame.Surface((450, 200))
     solid_surface.fill((255, 255, 255))
 
 # Set the transparency for the entire surface before blitting
@@ -605,7 +605,7 @@ def draw_ui():
 
     info1 = [
         f"(debug) solution angle*: {solution_angle:.1f}°",
-        f"Level: {current_level}",
+        f"Level: {current_level}/10",
         f"Gravity: {gravity_mss:.2f} m/s²",   # ONE line only (works for planets + random)
         f"Mass: {mass:.2f}kg",
         f"Drag force: {drag_k:.2f}",
