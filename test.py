@@ -46,6 +46,42 @@ cannon_body = pygame.transform.scale(pygame.image.load("cannon_body.png"), (ball
 cannon_wheel = pygame.transform.scale(pygame.image.load("cannon_wheel.png"), (ball_radius*5, ball_radius*5))
 platform = pygame.Rect(0, INIT_BALL_Y + cannon_wheel.get_height(), 200, 300)
 
+# -------------------------
+# GAME STATE + MODES
+# -------------------------
+STATE_MENU = "menu"
+STATE_PLAY = "play"
+
+MODE_DRAG_TRIAL = "drag_trial"     # drag + wind, trial & error (predicted line)
+MODE_NO_DRAG_SOLVE = "no_drag"     # no drag/wind, students solve angle
+
+game_state = STATE_MENU
+game_mode = MODE_DRAG_TRIAL  # default (will be overwritten when player clicks)
+
+# -------------------------
+# SIMPLE BUTTONS
+# -------------------------
+BTN_W, BTN_H = 360, 70
+btn1 = pygame.Rect(WIDTH//2 - BTN_W//2, HEIGHT//2 - 90, BTN_W, BTN_H)
+btn2 = pygame.Rect(WIDTH//2 - BTN_W//2, HEIGHT//2 + 10,  BTN_W, BTN_H)
+
+def draw_button(rect, text):
+    pygame.draw.rect(screen, (255, 255, 255), rect, border_radius=14)
+    pygame.draw.rect(screen, (0, 0, 0), rect, 3, border_radius=14)
+    t = bigfont.render(text, True, (0,0,0))
+    screen.blit(t, (rect.centerx - t.get_width()//2, rect.centery - t.get_height()//2))
+
+def draw_menu():
+    screen.fill((220, 220, 255))
+    title = bigfont.render("Choose a Mode", True, (0,0,0))
+    screen.blit(title, (WIDTH//2 - title.get_width()//2, 120))
+
+    draw_button(btn1, "Mode 1: Drag + Wind (Trial & Error)")
+    draw_button(btn2, "Mode 2: No Drag/Wind (Solve Angle)")
+
+    tip = font.render("Click a mode to start", True, (0,0,0))
+    screen.blit(tip, (WIDTH//2 - tip.get_width()//2, 120 + 50))
+
 pygame.mixer.init()
 # Music: https://pixabay.com/music/search/game%20background/
 pygame.mixer.music.load('backgroundmusicforvideos-gaming-game-minecraft-background-music-372242.mp3')
@@ -110,6 +146,80 @@ def random_parameters():
 # -------------------------
 # FUNCTIONS
 # -------------------------
+
+def solve_angles_no_drag(dx, dy_down, v, g):
+    """
+    dx: +right (px or m, consistent)
+    dy_down: +down (pygame style)
+    v: speed
+    g: gravity (positive down in pygame)
+    Returns: list of angle degrees (0..90) that hit that displacement, if any.
+    """
+    if dx <= 0:
+        return []
+
+    # Convert to "up-positive" y for the classic projectile equation
+    y = -dy_down  # up-positive
+    x = dx
+
+    A = g * x * x / (2 * v * v)  # g is positive magnitude
+    # Quadratic in t = tan(theta): A t^2 - x t + (A + y) = 0
+    # Discriminant:
+    D = x*x - 4*A*(A + y)
+    if D < 0:
+        return []
+
+    sqrtD = math.sqrt(D)
+    denom = 2*A
+    if denom == 0:
+        return []
+
+    t1 = (x + sqrtD) / denom
+    t2 = (x - sqrtD) / denom
+
+    angles = []
+    for t in (t1, t2):
+        if t > 0:
+            ang = math.degrees(math.atan(t))
+            angles.append(ang)
+
+    # remove near-duplicates
+    angles = sorted(set([round(a, 6) for a in angles]))
+    return angles
+
+
+def spawn_target_no_drag_solve(v, g):
+    """
+    Chooses a random target rectangle that is solvable (has at least one angle solution).
+    Returns (target_rect, solution_angle).
+    """
+    tw, th = 40, 100
+
+    for _ in range(800):
+        # pick a random on-screen target position (same bounds style you used)
+        left = random.randint(300, WIDTH - 20 - tw)
+        top  = random.randint(50, HEIGHT - 60 - th)
+        rect = pygame.Rect(left, top, tw, th)
+
+        dx = rect.centerx - INIT_BALL_X
+        dy = rect.centery - INIT_BALL_Y  # +down
+
+        angles = solve_angles_no_drag(dx, dy, v, g)
+        # pick a reasonable angle band for gameplay
+        angles = [a for a in angles if 10 <= a <= 80]
+        if angles:
+            # choose one (low arc or high arc — pick one for consistency)
+            chosen = random.choice(angles)
+            return rect, chosen
+
+    # fallback
+    rect = pygame.Rect(750, HEIGHT - 150, tw, th)
+    dx = rect.centerx - INIT_BALL_X
+    dy = rect.centery - INIT_BALL_Y
+    angles = solve_angles_no_drag(dx, dy, v, g)
+    chosen = angles[0] if angles else 45
+    return rect, chosen
+
 def forward_displacement_for_angle(test_angle, velocity, gravity, wind_x, drag_k, mass, max_steps=2000):
     rad = math.radians(test_angle)
 
@@ -264,10 +374,16 @@ def reset_round():
     # Set gravity based on the planet (level)
     gravity = gravity_for_level(current_level)
 
-    # Randomize the other parameters like before
+        # Randomize shared stuff
     mass = random.uniform(0.5, 5)
-    drag_k = random.uniform(0.0, 1.5)
-    wind_x = random.uniform(-200, 200)
+
+    if game_mode == MODE_DRAG_TRIAL:
+        drag_k = random.uniform(0.0, 1.5)
+        wind_x = random.uniform(-200, 200)
+    else:
+        # Mode 2: turn off drag & wind
+        drag_k = 0.0
+        wind_x = 0.0
     
 
     # fixed velocity for the whole game
@@ -284,18 +400,42 @@ def reset_round():
     # player starts here
     angle = 45
 
-    # pick a hidden winning angle and spawn target based on it
-    for _ in range(200):
-        solution_angle = random.uniform(10, 80)
+    if game_mode == MODE_DRAG_TRIAL:
+        # Mode 1: spawn target by simulating drag+wind from a hidden angle
+        for _ in range(200):
+            solution_angle = random.uniform(10, 80)
+            rect, t_sol = find_target_point_for_angle(
+                solution_angle, velocity, gravity, wind_x, drag_k, mass
+            )
+            if rect is None:
+                continue
+            target_rect = rect
+            flight_time = t_sol
+            delta_x = target_rect.centerx - ball_x
+            delta_y = target_rect.centery - ball_y
+            return
 
-        rect, t_sol = find_target_point_for_angle(
-            solution_angle, velocity, gravity, wind_x, drag_k, mass
-    )
-        if rect is None:
-            continue
+        # fallback if not found
+        target_rect = pygame.Rect(750, HEIGHT - 150, 40, 100)
+        solution_angle = 45
+        flight_time = 2.5
+        delta_x = target_rect.centerx - ball_x
+        delta_y = target_rect.centery - ball_y
+        return
 
-        target_rect = rect
-        flight_time = t_sol
+    else:
+        # Mode 2: NO drag/wind — pick a random solvable target, compute solution angle
+        target_rect, solution_angle = spawn_target_no_drag_solve(velocity, gravity)
+
+        # Optional: compute a "flight_time" estimate for auto-reset timing
+        # Use dx / (v cosθ)
+        rad = math.radians(solution_angle)
+        if math.cos(rad) != 0:
+            flight_time = (target_rect.centerx - INIT_BALL_X) / (velocity * math.cos(rad))
+            flight_time = max(0.4, min(6.0, flight_time))
+        else:
+            flight_time = 2.0
+
         delta_x = target_rect.centerx - ball_x
         delta_y = target_rect.centery - ball_y
         return
@@ -338,15 +478,20 @@ def update_physics():
         reset_round()
         return
 
-    # drag with wind-relative x speed
-    #rel_vx = vx - wind_x
-    #rel_vy = vy
+    if game_mode == MODE_DRAG_TRIAL:
+        # drag with wind-relative x speed
+        rel_vx = vx - wind_x
+        rel_vy = vy
 
-    #drag_fx = -drag_k * rel_vx
-    #drag_fy = -drag_k * rel_vy
+        drag_fx = -drag_k * rel_vx
+        drag_fy = -drag_k * rel_vy
 
-    #ax = drag_fx / mass
-    ay = gravity #+ (drag_fy / mass)
+        ax = drag_fx / mass
+        ay = gravity + (drag_fy / mass)
+    else:
+        # Mode 2: pure projectile motion
+        ax = 0.0
+        ay = gravity
 
     #vx += ax * DT
     vy += ay * DT
@@ -373,36 +518,42 @@ def check_hit():
 
 #predicted trajectory line
 
-def calculate_trajectory():
-    init_time = time.time()
-    global point
+def calculate_trajectory_points(max_steps=300):
+    points = []
+
     rad = math.radians(angle)
     sim_vx = velocity * math.cos(rad)
     sim_vy = -velocity * math.sin(rad)
     sim_x = ball_x
     sim_y = ball_y
 
-    for _ in range(300):  # number of simulation steps
-        #rel_vx = sim_vx - wind_x
-        #rel_vy = sim_vy
+    for _ in range(max_steps):
+        # Mode-aware physics for preview
+        if game_mode == MODE_DRAG_TRIAL:
+            rel_vx = sim_vx - wind_x
+            rel_vy = sim_vy
 
-        #drag_fx = -drag_k * rel_vx
-        #drag_fy = -drag_k * rel_vy
+            drag_fx = -drag_k * rel_vx
+            drag_fy = -drag_k * rel_vy
 
-        #ax = drag_fx / mass
-        ay = gravity #+ (drag_fy / mass)
+            ax = drag_fx / mass
+            ay = gravity + (drag_fy / mass)
+        else:
+            ax = 0.0
+            ay = gravity
 
         #sim_vx += ax * DT
         sim_vy += ay * DT
-
         sim_x += sim_vx * DT
         sim_y += sim_vy * DT
 
-        if sim_y >= HEIGHT:
-            break
-        point = (int(sim_x), int(sim_y))
+        points.append((int(sim_x), int(sim_y)))
 
-    return (int(sim_x), int(sim_y))
+        # stop conditions
+        if sim_y >= GROUND_Y or sim_x < -200 or sim_x > WIDTH + 200:
+            break
+
+    return points
 
 images = {}
 def load_background(filename):
@@ -456,12 +607,14 @@ def draw_ui():
         f"(debug) solution angle*: {solution_angle:.1f}°",
         f"Level: {current_level}",
         f"Gravity: {gravity_mss:.2f} m/s²",   # ONE line only (works for planets + random)
-        f"Mass: {mass:.2f}",
-        f"Drag k: {drag_k:.2f}",
-        f"Wind X: {wind_ms:.2f} m/s",
+        f"Mass: {mass:.2f}kg",
+        f"Drag force: {drag_k:.2f}",
+        f"Wind (x-axis only): {wind_ms:.2f} m/s",
         f"Flight time: {flight_time:.2f}s",
     ]
-    
+    mode_name = "Mode 1 (Drag+Wind)" if game_mode == MODE_DRAG_TRIAL else "Mode 2 (No Drag/Wind)"
+    info1.insert(0, mode_name)
+
     info2 = [
         f"Δx: {dx_m:.2f} m",
         f"Δy: {dy_m:.2f} m (down +)",
@@ -701,6 +854,19 @@ while running:
 
         if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
             mx, my = event.pos   # <-- define them here
+            if game_state == STATE_MENU:
+                if btn1.collidepoint(mx, my):
+                    game_mode = MODE_DRAG_TRIAL
+                    game_state = STATE_PLAY
+                    current_level = 0
+                    tutorial_screen_no = 0
+                    reset_round()
+                elif btn2.collidepoint(mx, my):
+                    game_mode = MODE_NO_DRAG_SOLVE
+                    game_state = STATE_PLAY
+                    current_level = 0
+                    tutorial_screen_no = 0
+                    reset_round()
 
         # Click Hint button
             if hint_btn_rect.collidepoint(mx, my):
@@ -759,6 +925,10 @@ while running:
     angle = max(5, min(85, angle))
     rad = math.radians(angle)
 
+    if game_state == STATE_MENU:
+        draw_menu()
+        pygame.display.flip()
+        continue
 
     # Run level-specific logic
     if not win:
@@ -806,13 +976,11 @@ while running:
     #    pygame.draw.line(screen, (0,0,0), (ball_x, ball_y), (lx, ly), 3)
 
     # Draw predicted trajectory as a dotted line
-    #if not launched:
-    #    trajectory_points = calculate_trajectory()
-    #    if len(trajectory_points) > 1:
-    #        for i in range(0, len(trajectory_points)-1, 3):  # skip every 3 points to create gaps
-    #            start = trajectory_points[i]
-    #            end = trajectory_points[i+1]
-    #            pygame.draw.line(screen, (150, 150, 150), start, end, 2)
+    if game_mode == MODE_DRAG_TRIAL and not launched:
+        trajectory_points = calculate_trajectory_points()
+        for i in range(0, len(trajectory_points) - 1, 3):  # skip to create gaps
+            pygame.draw.line(screen, (150, 150, 150),
+            trajectory_points[i], trajectory_points[i + 1], 2)
 
 
     if not paused:
