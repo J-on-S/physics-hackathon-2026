@@ -46,7 +46,7 @@ def random_parameters():
     mass = random.uniform(0.5, 5)
     drag_k = random.uniform(0.0, 1.5)
     wind_x = random.uniform(-200, 200)
-    velocity = random.uniform(400,1200)
+    velocity = random.uniform(500,800)
     return gravity, mass, drag_k, wind_x, velocity
 
 
@@ -84,36 +84,58 @@ def launch():
     global target_rect
     global ball_x, ball_y, vx, vy, launched
     global vx, vy, launched
-    global gravity, mass, drag_k, wind_x, velocity
+    global gravity, mass, drag_k, wind_x, velocity, delta_t
     rad = math.radians(angle)
     vx = velocity * math.cos(rad)
     vy = -velocity * math.sin(rad)
     launched = True
-
+    
+# start = (ball_x, ball_y) 
+# end = (target_rect.x, target_rect.y)
+# delta_t = 0
+# x_test = start[0]
+# y_test = start[1]
+# def time_to_collision():
+#     global vx, vy, launched, angle, t
+#     global gravity, mass, drag_k, wind_x, velocity, delta_t, x_test, y_test
+#     start_time = time.time() 
+#     t = delta_t
+#     if t > 1:
+#         t = 1
+#     if (x_test, y_test) != end:
+#         print(delta_t)
+#         delta_t += DT
+#         x_test = start[0] + (end[0] - start[0]) * t
+#         y_test = start[1] + (end[1] - start[1]) * t
+#         height = ((vy*math.sin(angle))**2/(2*gravity)) + ball_y
+#         y_test -= height * (4 * t * (1 - t)) #change 200?
+#         pygame.draw.circle(screen, (255, 200, 50), (int(x_test), int(y_test)), 10) 
+#         pygame.display.flip()
+        #print(x_test, y_test)
+        #print(target_rect.x, target_rect.y)
 
 
 def update_physics():
     global target_rect
     global ball_x, ball_y, vx, vy, launched
-    global vx, vy, launched
-    global gravity, mass, drag_k, wind_x, velocity
+    global gravity, mass, drag_k, wind_x, velocity, delta_t
     if not launched:
         return
 
     # Relative velocity (for wind)
-    rel_vx = vx - wind_x
-    rel_vy = vy
+    #rel_vx = vx - wind_x
+    #rel_vy = vy
 
     # Drag force
-    drag_fx = -drag_k * rel_vx
-    drag_fy = -drag_k * rel_vy
+    #drag_fx = -drag_k * rel_vx
+    #drag_fy = -drag_k * rel_vy
 
     # Accelerations
-    ax = drag_fx / mass
-    ay = gravity + (drag_fy / mass)
+    #ax = drag_fx / mass
+    ay = gravity #+ (drag_fy / mass)
 
     # Update velocity
-    vx += ax * DT
+    #vx += ax * DT
     vy += ay * DT
 
     # Update position
@@ -436,14 +458,25 @@ while running:
 
     if not launched:
         if keys[pygame.K_UP]:
+            # delta_t = 0
+            # x_test = start[0]
+            # y_test = start[1]
+            # t = 0
+            # end = (target_rect.x, target_rect.y)
             angle += 1
         if keys[pygame.K_DOWN]:
+            # delta_t = 0
+            # x_test = start[0]
+            # y_test = start[1]
+            # t = 0
+            # end = (target_rect.x, target_rect.y)
             angle -= 1
 
     angle = max(5, min(85, angle))
     rad = math.radians(angle)
 
     update_physics()
+    #time_to_collision()
 
     # Run level-specific logic
     LEVELS[current_level - 1]()
