@@ -88,7 +88,7 @@ pygame.mixer.music.load('backgroundmusicforvideos-gaming-game-minecraft-backgrou
 pygame.mixer.music.play(-1)
 
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
-pygame.display.set_caption("Physics Hackathon Prototype")
+pygame.display.set_caption("Deca-Launch")
 
 clock = pygame.time.Clock()
 font = pygame.font.SysFont("Arial", 18)
@@ -233,16 +233,16 @@ def forward_displacement_for_angle(test_angle, velocity, gravity, wind_x, drag_k
 
     for _ in range(max_steps):
         # relative velocity for drag (wind only affects x-relative speed)
-        rel_vx = sim_vx - wind_x
-        rel_vy = sim_vy
+        #rel_vx = sim_vx - wind_x
+        #rel_vy = sim_vy
 
-        drag_fx = -drag_k * rel_vx
-        drag_fy = -drag_k * rel_vy
+        #drag_fx = -drag_k * rel_vx
+        #drag_fy = -drag_k * rel_vy
 
-        ax = drag_fx / mass
-        ay = gravity + (drag_fy / mass)
+        #ax = drag_fx / mass
+        ay = gravity #+ (drag_fy / mass)
 
-        sim_vx += ax * DT
+        #sim_vx += ax * DT
         sim_vy += ay * DT
 
         sim_x += sim_vx * DT
@@ -279,16 +279,16 @@ def find_target_point_for_angle(test_angle, velocity, gravity, wind_x, drag_k, m
 
     for _ in range(2000):
         # drag (wind affects relative x speed)
-        rel_vx = sim_vx - wind_x
-        rel_vy = sim_vy
+        #rel_vx = sim_vx - wind_x
+        #rel_vy = sim_vy
 
-        drag_fx = -drag_k * rel_vx
-        drag_fy = -drag_k * rel_vy
+        #drag_fx = -drag_k * rel_vx
+        #drag_fy = -drag_k * rel_vy
 
-        ax = drag_fx / mass
-        ay = gravity + (drag_fy / mass)
+        #ax = drag_fx / mass
+        ay = gravity #+ (drag_fy / mass)
 
-        sim_vx += ax * DT
+        #sim_vx += ax * DT
         sim_vy += ay * DT
         sim_x += sim_vx * DT
         sim_y += sim_vy * DT
@@ -316,6 +316,10 @@ def find_target_point_for_angle(test_angle, velocity, gravity, wind_x, drag_k, m
 
 def draw_hint_ui():
     global hint_open
+
+    # Don't draw at game start or end
+    if current_level == 0 or win:
+        return
 
     # Draw Hint button (always visible)
     pygame.draw.rect(screen, (245, 245, 245), hint_btn_rect, border_radius=8)
@@ -489,7 +493,7 @@ def update_physics():
         ax = 0.0
         ay = gravity
 
-    vx += ax * DT
+    #vx += ax * DT
     vy += ay * DT
 
     ball_x += vx * DT
@@ -538,7 +542,7 @@ def calculate_trajectory_points(max_steps=300):
             ax = 0.0
             ay = gravity
 
-        sim_vx += ax * DT
+        #sim_vx += ax * DT
         sim_vy += ay * DT
         sim_x += sim_vx * DT
         sim_y += sim_vy * DT
