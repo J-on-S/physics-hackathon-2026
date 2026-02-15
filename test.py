@@ -41,10 +41,12 @@ PLANET_GRAVITY_MSS = {
     9: 11.15   # Neptune
 }
 
+cliff = pygame.transform.scale(pygame.image.load("cliff (1).png"), (300, 300))
 redbirdskin = pygame.transform.scale(pygame.image.load("redbird.png"), (ball_radius*8, ball_radius*8))
 cannon_body = pygame.transform.scale(pygame.image.load("cannon_body.png"), (ball_radius*10, ball_radius*10))
 cannon_wheel = pygame.transform.scale(pygame.image.load("cannon_wheel.png"), (ball_radius*5, ball_radius*5))
 platform = pygame.Rect(0, INIT_BALL_Y + cannon_wheel.get_height(), 200, 300)
+target = pygame.transform.scale(pygame.image.load("target.png"), (40, 40))
 
 # -------------------------
 # GAME STATE + MODES
@@ -414,7 +416,8 @@ def reset_round():
             return
 
         # fallback if not found
-        target_rect = pygame.Rect(750, HEIGHT - 150, 40, 100)
+        target_rect = pygame.Rect(750, HEIGHT - 150, 40, 40)
+        screen.blit(target, (750, HEIGHT - 150))
         solution_angle = 45
         flight_time = 2.5
         delta_x = target_rect.centerx - ball_x
@@ -439,7 +442,7 @@ def reset_round():
         return
 
     # fallback
-    target_rect = pygame.Rect(750, HEIGHT - 150, 40, 100)
+    target_rect = pygame.Rect(750, HEIGHT - 150, 40, 40)
     solution_angle = 45
     flight_time = 2.5
     delta_x = target_rect.centerx - ball_x
@@ -728,7 +731,8 @@ def level1():
     screen.blit(background, (0, 0))
     global current_level
     # Draw target
-    pygame.draw.rect(screen, (200, 0, 0), target_rect)
+    #pygame.draw.rect(screen, (200, 0, 0), target_rect)
+    screen.blit(target, (target_rect.x, target_rect.y))
 
     # Draw ball
     #pygame.draw.circle(screen, (0, 100, 255), (int(ball_x), int(ball_y)), ball_radius)
@@ -764,7 +768,8 @@ def level2():
     screen.blit(background, (0, 0))
     global current_level
     # Draw target
-    pygame.draw.rect(screen, (10, 100, 0), target_rect)
+    #pygame.draw.rect(screen, (10, 100, 0), target_rect)
+    screen.blit(target, (target_rect.x, target_rect.y))
 
     # Draw ball
     #pygame.draw.circle(screen, (0, 100, 255), (int(ball_x), int(ball_y)), ball_radius)
@@ -800,7 +805,8 @@ def level3():
     screen.blit(background, (0, 0))
     global current_level
     # Draw target
-    pygame.draw.rect(screen, (10, 100, 0), target_rect)
+    #pygame.draw.rect(screen, (10, 100, 0), target_rect)
+    screen.blit(target, (target_rect.x, target_rect.y))
 
     # Draw ball
     #pygame.draw.circle(screen, (0, 100, 255), (int(ball_x), int(ball_y)), ball_radius)
@@ -835,7 +841,8 @@ def level4():
     screen.blit(background, (0, 0))
     global current_level
     # Draw target
-    pygame.draw.rect(screen, (10, 100, 0), target_rect)
+    #pygame.draw.rect(screen, (10, 100, 0), target_rect)
+    screen.blit(target, (target_rect.x, target_rect.y))
 
     # Draw ball
     #pygame.draw.circle(screen, (0, 100, 255), (int(ball_x), int(ball_y)), ball_radius)
@@ -870,7 +877,8 @@ def level5():
     screen.blit(background, (0, 0))
     global current_level
     # Draw target
-    pygame.draw.rect(screen, (10, 100, 0), target_rect)
+    #pygame.draw.rect(screen, (10, 100, 0), target_rect)
+    screen.blit(target, (target_rect.x, target_rect.y))
 
     # Draw ball
     #pygame.draw.circle(screen, (0, 100, 255), (int(ball_x), int(ball_y)), ball_radius)
@@ -905,7 +913,8 @@ def level6():
     screen.blit(background, (0, 0))
     global current_level
     # Draw target
-    pygame.draw.rect(screen, (10, 100, 0), target_rect)
+    #pygame.draw.rect(screen, (10, 100, 0), target_rect)
+    screen.blit(target, (target_rect.x, target_rect.y))
 
     # Draw ball
     #pygame.draw.circle(screen, (0, 100, 255), (int(ball_x), int(ball_y)), ball_radius)
@@ -940,7 +949,8 @@ def level7():
     screen.blit(background, (0, 0))
     global current_level
     # Draw target
-    pygame.draw.rect(screen, (10, 100, 0), target_rect)
+    #pygame.draw.rect(screen, (10, 100, 0), target_rect)
+    screen.blit(target, (target_rect.x, target_rect.y))
 
     # Draw ball
     #pygame.draw.circle(screen, (0, 100, 255), (int(ball_x), int(ball_y)), ball_radius)
@@ -975,7 +985,8 @@ def level8():
     screen.blit(background, (0, 0))
     global current_level
     # Draw target
-    pygame.draw.rect(screen, (10, 100, 0), target_rect)
+    #pygame.draw.rect(screen, (10, 100, 0), target_rect)
+    screen.blit(target, (target_rect.x, target_rect.y))
 
     # Draw ball
     #pygame.draw.circle(screen, (0, 100, 255), (int(ball_x), int(ball_y)), ball_radius)
@@ -1010,7 +1021,8 @@ def level9():
     screen.blit(background, (0, 0))
     global current_level
     # Draw target
-    pygame.draw.rect(screen, (10, 100, 0), target_rect)
+    #pygame.draw.rect(screen, (10, 100, 0), target_rect)
+    screen.blit(target, (target_rect.x, target_rect.y))
 
     # Draw ball
     #pygame.draw.circle(screen, (0, 100, 255), (int(ball_x), int(ball_y)), ball_radius)
@@ -1046,7 +1058,8 @@ def winlevel10():
     background = load_background("mystery.png")
     screen.blit(background, (0, 0))
     global current_level, win, FPS
-    pygame.draw.rect(screen, (10, 100, 0), target_rect)
+    #pygame.draw.rect(screen, (10, 100, 0), target_rect)
+    screen.blit(target, (target_rect.x, target_rect.y))
 
     if check_hit():
         pygame.mixer.init()
@@ -1180,6 +1193,9 @@ while running:
             bird_y = int(ball_y) - (redbirdskin.get_height()/2)
             screen.blit(redbirdskin, (bird_x, bird_y))
 
+        #Draws ground
+        screen.blit(cliff, (0, INIT_BALL_Y + cannon_wheel.get_height()))
+
         #Draws cannon
         cannon_body = pygame.transform.rotate(pygame.transform.scale(pygame.image.load("cannon_body.png"), (ball_radius*10, ball_radius*10)), angle)
         cannon_x = (INIT_BALL_X - (cannon_body.get_width()/2))
@@ -1187,8 +1203,6 @@ while running:
         screen.blit(cannon_body, (cannon_x, cannon_y))
         screen.blit(cannon_wheel, (INIT_BALL_X - (cannon_wheel.get_width()/2), INIT_BALL_Y + (cannon_wheel.get_height()/3)))
 
-        #Draws ground
-        pygame.draw.rect(screen, (0, 0, 0), platform)
 
     #give final vy
     #f_v_x = calculate_trajectory()[0]
