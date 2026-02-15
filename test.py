@@ -93,6 +93,7 @@ pygame.display.set_caption("Deca-Launch")
 clock = pygame.time.Clock()
 font = pygame.font.SysFont("Arial", 18)
 bigfont = pygame.font.SysFont("Arial", 30)
+big_font = pygame.font.SysFont("Arial", 64, bold=True)
 
 GROUND_Y = HEIGHT - 50
 # -------------------------
@@ -737,12 +738,29 @@ def level1():
     #pygame.draw.circle(screen, (0, 100, 255), (int(ball_x), int(ball_y)), ball_radius)
 
     if check_hit():
-        win_text = font.render("TARGET HIT!", True, (0,150,0))
-        screen.blit(win_text, (WIDTH//2 - 60, 50))
-        pygame.display.flip() # Show the win text for 500ms
-        pygame.time.delay(500)
-        current_level = 2 # Move to level 2
-        #press key to continue
+        message = "TARGET HIT!"
+        text_surface = big_font.render(message, True, (255, 255, 255))
+
+    # Center text on screen
+        text_rect = text_surface.get_rect(center=(WIDTH // 2, HEIGHT // 2))
+
+    # Create box around text
+        padding = 25
+        box_rect = text_rect.inflate(padding * 2, padding * 2)
+
+    # Draw dark box
+        pygame.draw.rect(screen, (20, 20, 20), box_rect, border_radius=15)
+
+    # Draw white border
+        pygame.draw.rect(screen, (255, 255, 255), box_rect, 4, border_radius=15)
+
+    # Draw text
+        screen.blit(text_surface, text_rect)
+
+        pygame.display.flip()
+        pygame.time.delay(1000)   # show for 1 second
+
+        current_level = 2
         reset_round()
 
 def level2():
@@ -756,12 +774,29 @@ def level2():
     #pygame.draw.circle(screen, (0, 100, 255), (int(ball_x), int(ball_y)), ball_radius)
 
     if check_hit():
-        win_text = font.render("TARGET HIT!", True, (0,150,0))
-        screen.blit(win_text, (WIDTH//2 - 60, 50))
-        pygame.display.flip() # Show the win text for 500ms
-        pygame.time.delay(500)
-        current_level += 1 # Move back to level 1
-        #press key to continue
+        message = "TARGET HIT!"
+        text_surface = big_font.render(message, True, (255, 255, 255))
+
+    # Center text on screen
+        text_rect = text_surface.get_rect(center=(WIDTH // 2, HEIGHT // 2))
+
+    # Create box around text
+        padding = 25
+        box_rect = text_rect.inflate(padding * 2, padding * 2)
+
+    # Draw dark box
+        pygame.draw.rect(screen, (20, 20, 20), box_rect, border_radius=15)
+
+    # Draw white border
+        pygame.draw.rect(screen, (255, 255, 255), box_rect, 4, border_radius=15)
+
+    # Draw text
+        screen.blit(text_surface, text_rect)
+
+        pygame.display.flip()
+        pygame.time.delay(1000)   # show for 1 second
+
+        current_level += 1
         reset_round()
 
 def level3():
@@ -775,12 +810,29 @@ def level3():
     #pygame.draw.circle(screen, (0, 100, 255), (int(ball_x), int(ball_y)), ball_radius)
 
     if check_hit():
-        win_text = font.render("TARGET HIT!", True, (0,150,0))
-        screen.blit(win_text, (WIDTH//2 - 60, 50))
-        pygame.display.flip() # Show the win text for 500ms
-        pygame.time.delay(500)
-        current_level += 1 # Move back to level 1
-        #press key to continue
+        message = "TARGET HIT!"
+        text_surface = big_font.render(message, True, (255, 255, 255))
+
+    # Center text on screen
+        text_rect = text_surface.get_rect(center=(WIDTH // 2, HEIGHT // 2))
+
+    # Create box around text
+        padding = 25
+        box_rect = text_rect.inflate(padding * 2, padding * 2)
+
+    # Draw dark box
+        pygame.draw.rect(screen, (20, 20, 20), box_rect, border_radius=15)
+
+    # Draw white border
+        pygame.draw.rect(screen, (255, 255, 255), box_rect, 4, border_radius=15)
+
+    # Draw text
+        screen.blit(text_surface, text_rect)
+
+        pygame.display.flip()
+        pygame.time.delay(1000)   # show for 1 second
+
+        current_level += 1
         reset_round()
 def level4():
     background = load_background("moon2.png")
@@ -793,12 +845,29 @@ def level4():
     #pygame.draw.circle(screen, (0, 100, 255), (int(ball_x), int(ball_y)), ball_radius)
 
     if check_hit():
-        win_text = font.render("TARGET HIT!", True, (0,150,0))
-        screen.blit(win_text, (WIDTH//2 - 60, 50))
-        pygame.display.flip() # Show the win text for 500ms
-        pygame.time.delay(500)
-        current_level += 1 # Move back to level 1
-        #press key to continue
+        message = "TARGET HIT!"
+        text_surface = big_font.render(message, True, (255, 255, 255))
+
+    # Center text on screen
+        text_rect = text_surface.get_rect(center=(WIDTH // 2, HEIGHT // 2))
+
+    # Create box around text
+        padding = 25
+        box_rect = text_rect.inflate(padding * 2, padding * 2)
+
+    # Draw dark box
+        pygame.draw.rect(screen, (20, 20, 20), box_rect, border_radius=15)
+
+    # Draw white border
+        pygame.draw.rect(screen, (255, 255, 255), box_rect, 4, border_radius=15)
+
+    # Draw text
+        screen.blit(text_surface, text_rect)
+
+        pygame.display.flip()
+        pygame.time.delay(1000)   # show for 1 second
+
+        current_level += 1
         reset_round()
 def level5():
     background = load_background("mars2.png")
@@ -811,12 +880,29 @@ def level5():
     #pygame.draw.circle(screen, (0, 100, 255), (int(ball_x), int(ball_y)), ball_radius)
 
     if check_hit():
-        win_text = font.render("TARGET HIT!", True, (0,150,0))
-        screen.blit(win_text, (WIDTH//2 - 60, 50))
-        pygame.display.flip() # Show the win text for 500ms
-        pygame.time.delay(500)
-        current_level += 1 # Move back to level 1
-        #press key to continue
+        message = "TARGET HIT!"
+        text_surface = big_font.render(message, True, (255, 255, 255))
+
+    # Center text on screen
+        text_rect = text_surface.get_rect(center=(WIDTH // 2, HEIGHT // 2))
+
+    # Create box around text
+        padding = 25
+        box_rect = text_rect.inflate(padding * 2, padding * 2)
+
+    # Draw dark box
+        pygame.draw.rect(screen, (20, 20, 20), box_rect, border_radius=15)
+
+    # Draw white border
+        pygame.draw.rect(screen, (255, 255, 255), box_rect, 4, border_radius=15)
+
+    # Draw text
+        screen.blit(text_surface, text_rect)
+
+        pygame.display.flip()
+        pygame.time.delay(1000)   # show for 1 second
+
+        current_level += 1
         reset_round()
 def level6():
     background = load_background("jupiter.png")
@@ -829,12 +915,29 @@ def level6():
     #pygame.draw.circle(screen, (0, 100, 255), (int(ball_x), int(ball_y)), ball_radius)
 
     if check_hit():
-        win_text = font.render("TARGET HIT!", True, (0,150,0))
-        screen.blit(win_text, (WIDTH//2 - 60, 50))
-        pygame.display.flip() # Show the win text for 500ms
-        pygame.time.delay(500)
-        current_level += 1 # Move back to level 1
-        #press key to continue
+        message = "TARGET HIT!"
+        text_surface = big_font.render(message, True, (255, 255, 255))
+
+    # Center text on screen
+        text_rect = text_surface.get_rect(center=(WIDTH // 2, HEIGHT // 2))
+
+    # Create box around text
+        padding = 25
+        box_rect = text_rect.inflate(padding * 2, padding * 2)
+
+    # Draw dark box
+        pygame.draw.rect(screen, (20, 20, 20), box_rect, border_radius=15)
+
+    # Draw white border
+        pygame.draw.rect(screen, (255, 255, 255), box_rect, 4, border_radius=15)
+
+    # Draw text
+        screen.blit(text_surface, text_rect)
+
+        pygame.display.flip()
+        pygame.time.delay(1000)   # show for 1 second
+
+        current_level += 1
         reset_round()
 def level7():
     background = load_background("saturn.png")
@@ -847,12 +950,29 @@ def level7():
     #pygame.draw.circle(screen, (0, 100, 255), (int(ball_x), int(ball_y)), ball_radius)
 
     if check_hit():
-        win_text = font.render("TARGET HIT!", True, (0,150,0))
-        screen.blit(win_text, (WIDTH//2 - 60, 50))
-        pygame.display.flip() # Show the win text for 500ms
-        pygame.time.delay(500)
-        current_level += 1 # Move back to level 1
-        #press key to continue
+        message = "TARGET HIT!"
+        text_surface = big_font.render(message, True, (255, 255, 255))
+
+    # Center text on screen
+        text_rect = text_surface.get_rect(center=(WIDTH // 2, HEIGHT // 2))
+
+    # Create box around text
+        padding = 25
+        box_rect = text_rect.inflate(padding * 2, padding * 2)
+
+    # Draw dark box
+        pygame.draw.rect(screen, (20, 20, 20), box_rect, border_radius=15)
+
+    # Draw white border
+        pygame.draw.rect(screen, (255, 255, 255), box_rect, 4, border_radius=15)
+
+    # Draw text
+        screen.blit(text_surface, text_rect)
+
+        pygame.display.flip()
+        pygame.time.delay(1000)   # show for 1 second
+
+        current_level += 1
         reset_round()
 def level8():
     background = load_background("uranus.png")
@@ -865,12 +985,29 @@ def level8():
     #pygame.draw.circle(screen, (0, 100, 255), (int(ball_x), int(ball_y)), ball_radius)
 
     if check_hit():
-        win_text = font.render("TARGET HIT!", True, (0,150,0))
-        screen.blit(win_text, (WIDTH//2 - 60, 50))
-        pygame.display.flip() # Show the win text for 500ms
-        pygame.time.delay(500)
-        current_level += 1 # Move back to level 1
-        #press key to continue
+        message = "TARGET HIT!"
+        text_surface = big_font.render(message, True, (255, 255, 255))
+
+    # Center text on screen
+        text_rect = text_surface.get_rect(center=(WIDTH // 2, HEIGHT // 2))
+
+    # Create box around text
+        padding = 25
+        box_rect = text_rect.inflate(padding * 2, padding * 2)
+
+    # Draw dark box
+        pygame.draw.rect(screen, (20, 20, 20), box_rect, border_radius=15)
+
+    # Draw white border
+        pygame.draw.rect(screen, (255, 255, 255), box_rect, 4, border_radius=15)
+
+    # Draw text
+        screen.blit(text_surface, text_rect)
+
+        pygame.display.flip()
+        pygame.time.delay(1000)   # show for 1 second
+
+        current_level += 1
         reset_round()
 def level9():
     background = load_background("neptune.png")
@@ -883,12 +1020,29 @@ def level9():
     #pygame.draw.circle(screen, (0, 100, 255), (int(ball_x), int(ball_y)), ball_radius)
 
     if check_hit():
-        win_text = font.render("TARGET HIT!", True, (0,150,0))
-        screen.blit(win_text, (WIDTH//2 - 60, 50))
-        pygame.display.flip() # Show the win text for 500ms
-        pygame.time.delay(500)
-        current_level += 1 # Move back to level 1
-        #press key to continue
+        message = "TARGET HIT!"
+        text_surface = big_font.render(message, True, (255, 255, 255))
+
+    # Center text on screen
+        text_rect = text_surface.get_rect(center=(WIDTH // 2, HEIGHT // 2))
+
+    # Create box around text
+        padding = 25
+        box_rect = text_rect.inflate(padding * 2, padding * 2)
+
+    # Draw dark box
+        pygame.draw.rect(screen, (20, 20, 20), box_rect, border_radius=15)
+
+    # Draw white border
+        pygame.draw.rect(screen, (255, 255, 255), box_rect, 4, border_radius=15)
+
+    # Draw text
+        screen.blit(text_surface, text_rect)
+
+        pygame.display.flip()
+        pygame.time.delay(1000)   # show for 1 second
+
+        current_level += 1
         reset_round()
 
 
