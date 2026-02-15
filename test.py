@@ -653,37 +653,68 @@ LEVEL_NAME = {
     9: "Neptune",
     10: "Mystery Planet"
 }
-
+PLANET_COLORS = {
+    1: (210, 180, 140),   # Mercury - dusty beige
+    2: (230, 190, 120),   # Venus - yellow/orange
+    3: (120, 170, 255),   # Earth - blue
+    4: (200, 200, 200),   # Moon - gray
+    5: (210, 100, 80),    # Mars - red
+    6: (220, 180, 120),   # Jupiter - tan
+    7: (230, 210, 160),   # Saturn - pale gold
+    8: (160, 220, 220),   # Uranus - cyan
+    9: (90, 130, 255),    # Neptune - deep blue
+    10: (180, 120, 220)   # Mystery - purple
+}
 def draw_planet_name_box(level):
     name = LEVEL_NAME.get(level, "Unknown")
+    color = PLANET_COLORS.get(level, (255, 255, 255))
 
-    # Font
     title_font = pygame.font.SysFont("Arial", 24, bold=True)
-    text = title_font.render(name, True, (0, 0, 0))
 
-    pad_x = 24
-    pad_y = 10
+    # Choose text color automatically (white on dark colors)
+    r, g, b = color
+    luminance = 0.2126*r + 0.7152*g + 0.0722*b
+    text_color = (255, 255, 255) if luminance < 140 else (0, 0, 0)
 
+    text = title_font.render(name, True, text_color)
+
+    pad_x, pad_y = 24, 10
     box_w = text.get_width() + pad_x * 2
     box_h = text.get_height() + pad_y * 2
 
-    # Center horizontally at top
-    x = WIDTH // 2 - box_w // 2
-    y = 12   # distance from top
+    # Top-middle position
+    x = WIDTH // 2 - box_w // 2 + 40   # move 40 pixels right
+    y = 12
 
-    # Create transparent surface
+    # Per-pixel alpha surface
     box_surf = pygame.Surface((box_w, box_h), pygame.SRCALPHA)
-    box_surf.fill((255, 255, 255, 180))  # white with transparency
+    box_surf.fill((0, 0, 0, 0))  # fully transparent
 
-    # Rounded border
-    pygame.draw.rect(box_surf, (0, 0, 0, 220),
-                     (0, 0, box_w, box_h), 2, border_radius=14)
+    radius = 14
 
-    # Draw text centered
-    box_surf.blit(text, (
-        box_w // 2 - text.get_width() // 2,
-        box_h // 2 - text.get_height() // 2
-    ))
+    # Draw FILLED rounded rectangle (no spill)
+    pygame.draw.rect(
+        box_surf,
+        (r, g, b, 200),          # planet color with alpha
+        (0, 0, box_w, box_h),
+        border_radius=radius
+    )
+
+    # Draw border on top
+    pygame.draw.rect(
+        box_surf,
+        (0, 0, 0, 230),
+        (0, 0, box_w, box_h),
+        width=2,
+        border_radius=radius
+    )
+
+    # Draw centered text
+    box_surf.blit(
+        text,
+        (box_w // 2 - text.get_width() // 2,
+         box_h // 2 - text.get_height() // 2)
+    )
 
     screen.blit(box_surf, (x, y))
 
