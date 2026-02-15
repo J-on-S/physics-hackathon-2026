@@ -287,9 +287,17 @@ def draw_ui():
         text = font.render(line, True, (0,0,0))
         screen.blit(text, (10, y_offset))
         y_offset += 22
-    
+
     scoretextobject = font.render(scoretext, True, (0,0,0))
     screen.blit(scoretextobject, (WIDTH-scoretextobject.get_width()-10, 10))
+
+TUTORIAL_SCREENS = ['tutorial-1.png', 'tutorial-2.png']
+tutorial_screen_no = 0
+def tutorial():
+    global tutorial_screen_no
+    tutorial_screen = TUTORIAL_SCREENS[tutorial_screen_no]
+    screen.blit(load_background(tutorial_screen), (0, 0))
+
 
 def level1():
     background = load_background("mercury.png")
@@ -478,8 +486,8 @@ def winlevel10():
         
 
 backgrounds = {}
-LEVELS = [ level1, level2, level3,level4, level5,level6,level7, level8, level9,winlevel10]
-current_level = 1
+LEVELS = [tutorial, level1, level2, level3, level4, level5, level6, level7, level8, level9, winlevel10]
+current_level = 0
 
 #def updatescore():
 #    scoretext = f"Score: {score}"
@@ -500,17 +508,23 @@ while running:
             running = False
 
         if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_SPACE and not launched:
+            # Tutorial "level"
+            if current_level == 0:
+                tutorial_screen_no += 1
+                if tutorial_screen_no == len(TUTORIAL_SCREENS):
+                    # Move to next level after tutorial
+                    current_level += 1
+            elif event.key == pygame.K_SPACE and not launched:
                 launch()
             if event.key == pygame.K_n:
                 current_level += 1
-                if current_level > len(LEVELS):
-                    current_level = len(LEVELS)
+                if current_level >= len(LEVELS):
+                    current_level = len(LEVELS) - 1
             if event.key == pygame.K_w:
-                if current_level == len(LEVELS):
+                if current_level == len(LEVELS) - 1:
                     win = True
                 else:
-                    current_level = len(LEVELS)
+                    current_level = len(LEVELS) - 1
     
     keys = pygame.key.get_pressed()
     if keys[pygame.K_r] or (ball_x > WIDTH):
@@ -524,34 +538,37 @@ while running:
     velocity = max(100,min(1500,velocity))
     rad = math.radians(angle)
 
-    if not win:
-        update_physics()
 
     # Run level-specific logic
-    LEVELS[current_level - 1]()
+    if not win:
+        LEVELS[current_level]()
 
-    #Draws bird
-    if not launched:
-        redbirdskin.set_alpha(128) 
-        bird_x = (ball_x - (redbirdskin.get_width()/2))+ 60 * math.cos(rad)
-        bird_y = (ball_y - (redbirdskin.get_height()/2)) - 60 * math.sin(rad)
-        screen.blit(redbirdskin, (bird_x, bird_y))
-    else: 
-        redbirdskin.set_alpha(256)
-        bird_x = int(ball_x) - (redbirdskin.get_width()/2)
-        bird_y = int(ball_y) - (redbirdskin.get_height()/2)
-        screen.blit(redbirdskin, (bird_x, bird_y))
+    paused = (win or current_level == 0)
+    if not paused:
+        update_physics()
 
-    #Draws cannon
-    cannon_body = pygame.transform.rotate(pygame.transform.scale(pygame.image.load("cannon_body.png"), (ball_radius*10, ball_radius*10)), angle)
-    cannon_x = (INIT_BALL_X - (cannon_body.get_width()/2))
-    cannon_y = (INIT_BALL_Y - (cannon_body.get_height()/2))
-    screen.blit(cannon_body, (cannon_x, cannon_y))
-    screen.blit(cannon_wheel, (INIT_BALL_X - (cannon_wheel.get_width()/2), INIT_BALL_Y + (cannon_wheel.get_height()/3)))
+        #Draws bird
+        if not launched:
+            redbirdskin.set_alpha(128) 
+            bird_x = (ball_x - (redbirdskin.get_width()/2))+ 60 * math.cos(rad)
+            bird_y = (ball_y - (redbirdskin.get_height()/2)) - 60 * math.sin(rad)
+            screen.blit(redbirdskin, (bird_x, bird_y))
+        else: 
+            redbirdskin.set_alpha(256)
+            bird_x = int(ball_x) - (redbirdskin.get_width()/2)
+            bird_y = int(ball_y) - (redbirdskin.get_height()/2)
+            screen.blit(redbirdskin, (bird_x, bird_y))
 
-    #Draws ground
-    pygame.draw.rect(screen, (0, 0, 0), platform)
-    
+        #Draws cannon
+        cannon_body = pygame.transform.rotate(pygame.transform.scale(pygame.image.load("cannon_body.png"), (ball_radius*10, ball_radius*10)), angle)
+        cannon_x = (INIT_BALL_X - (cannon_body.get_width()/2))
+        cannon_y = (INIT_BALL_Y - (cannon_body.get_height()/2))
+        screen.blit(cannon_body, (cannon_x, cannon_y))
+        screen.blit(cannon_wheel, (INIT_BALL_X - (cannon_wheel.get_width()/2), INIT_BALL_Y + (cannon_wheel.get_height()/3)))
+
+        #Draws ground
+        pygame.draw.rect(screen, (0, 0, 0), platform)
+
     #give final vy
     #f_v_x = calculate_trajectory()[0]
     #f_v_y = calculate_trajectory()[1]
@@ -577,7 +594,8 @@ while running:
     #            pygame.draw.line(screen, (150, 150, 150), start, end, 2)
 
 
-    draw_ui()
+    if not paused:
+        draw_ui()
 
     if win:
         win_anim = ('modal-1.png', 'modal-2.png')
