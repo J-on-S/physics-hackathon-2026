@@ -1018,7 +1018,8 @@ def winlevel10():
     if check_hit():
         pygame.mixer.init()
         # Music: https://pixabay.com/sound-effects/search/serene/
-        pygame.mixer.music.load('gigidelaromusic-serene-air-tone-short-450969.mp3')
+        # Amplified with Audacity
+        pygame.mixer.music.load('gigidelaromusic-serene-air-tone-short-450969-amp.ogg')
         pygame.mixer.music.play(-1)
         win = True
         
@@ -1094,7 +1095,8 @@ while running:
                 if current_level == len(LEVELS) - 1:
                     pygame.mixer.init()
                     # Music: https://pixabay.com/sound-effects/search/serene/
-                    pygame.mixer.music.load('gigidelaromusic-serene-air-tone-short-450969.mp3')
+                    # Amplified with Audacity
+                    pygame.mixer.music.load('gigidelaromusic-serene-air-tone-short-450969-amp.ogg')
                     pygame.mixer.music.play(-1)
                     win = True
                 else:
