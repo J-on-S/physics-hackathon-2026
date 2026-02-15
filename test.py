@@ -640,6 +640,52 @@ def draw_ui():
     angle_text = angle_t.render(f"Angle: {angle}°", True, (0, 0, 0))
     screen.blit(angle_text, (220, y_offset))
 
+LEVEL_NAME = {
+    0: "Tutorial",
+    1: "Mercury",
+    2: "Venus",
+    3: "Earth",
+    4: "Moon",
+    5: "Mars",
+    6: "Jupiter",
+    7: "Saturn",
+    8: "Uranus",
+    9: "Neptune",
+    10: "Mystery Planet"
+}
+
+def draw_planet_name_box(level):
+    name = LEVEL_NAME.get(level, "Unknown")
+
+    # Font
+    title_font = pygame.font.SysFont("Arial", 24, bold=True)
+    text = title_font.render(name, True, (0, 0, 0))
+
+    pad_x = 24
+    pad_y = 10
+
+    box_w = text.get_width() + pad_x * 2
+    box_h = text.get_height() + pad_y * 2
+
+    # Center horizontally at top
+    x = WIDTH // 2 - box_w // 2
+    y = 12   # distance from top
+
+    # Create transparent surface
+    box_surf = pygame.Surface((box_w, box_h), pygame.SRCALPHA)
+    box_surf.fill((255, 255, 255, 180))  # white with transparency
+
+    # Rounded border
+    pygame.draw.rect(box_surf, (0, 0, 0, 220),
+                     (0, 0, box_w, box_h), 2, border_radius=14)
+
+    # Draw text centered
+    box_surf.blit(text, (
+        box_w // 2 - text.get_width() // 2,
+        box_h // 2 - text.get_height() // 2
+    ))
+
+    screen.blit(box_surf, (x, y))
 
 TUTORIAL_SCREENS = ['tutorial-1.png', 'tutorial-2.png']
 tutorial_screen_no = 0
@@ -933,6 +979,9 @@ while running:
     # Run level-specific logic
     if not win:
         LEVELS[current_level]()
+
+    if game_state == STATE_PLAY and current_level != 0 and not win:
+        draw_planet_name_box(current_level)
 
     paused = (win or current_level == 0)
     if not paused:
