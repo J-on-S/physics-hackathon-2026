@@ -331,6 +331,7 @@ def update_physics():
         launched = False
         vx = 0
         vy = 0
+        reset_round()
         return
 
     # drag with wind-relative x speed
@@ -351,6 +352,7 @@ def update_physics():
 
     if ball_y >= GROUND_Y:
         launched = False
+        reset_round()
 
 def check_hit():
     global target_rect
@@ -423,6 +425,18 @@ def load_anim(filenames):
 
 
 def draw_ui():
+    # ... (inside your game loop)
+
+# Create a solid surface
+    solid_surface = pygame.Surface((450, 175))
+    solid_surface.fill((255, 255, 255))
+
+# Set the transparency for the entire surface before blitting
+    solid_surface.set_alpha(128) # Sets the transparency of the entire surface
+
+# Blit it to the screen
+    screen.blit(solid_surface, (0, 0)) 
+
     global gravity, mass, drag_k, wind_x, velocity
     global delta_x, delta_y, current_level, solution_angle
     global PIXELS_PER_METER, flight_time, angle
@@ -434,30 +448,40 @@ def draw_ui():
     dx_m = delta_x / PIXELS_PER_METER              # px -> m
     dy_m = delta_y / PIXELS_PER_METER              # px -> m
 
-    info = [
+    info1 = [
         f"(debug) solution angle*: {solution_angle:.1f}°",
         f"Level: {current_level}",
         f"Gravity: {gravity_mss:.2f} m/s²",   # ONE line only (works for planets + random)
         f"Mass: {mass:.2f}",
         f"Drag k: {drag_k:.2f}",
         f"Wind X: {wind_ms:.2f} m/s",
-        f"Angle: {angle:.1f}°",
         f"Flight time: {flight_time:.2f}s",
+    ]
+    
+    info2 = [
         f"Δx: {dx_m:.2f} m",
         f"Δy: {dy_m:.2f} m (down +)",
-        "",
-        f"Velocity (fixed): {velocity_ms:.2f} m/s",
-        "",
+        f"Launch velocity (fixed): {velocity_ms:.2f} m/s",
         "UP/DOWN = Change angle",
         "SPACE = Launch",
         "R = Reset",
     ]
-
+    
     y_offset = 10
-    for line in info:
+    for line in info1:
         text = font.render(line, True, (0, 0, 0))
         screen.blit(text, (10, y_offset))
         y_offset += 22
+    
+    y_offset = 10
+    for line in info2:
+        text = font.render(line, True, (0, 0, 0))
+        screen.blit(text, (220, y_offset))
+        y_offset += 22
+    angle_t = pygame.font.SysFont("Arial", 20)
+    angle_t.set_bold(True)
+    angle_text = angle_t.render(f"Angle: {angle}°", True, (0, 0, 0))
+    screen.blit(angle_text, (220, y_offset))
 
 
 TUTORIAL_SCREENS = ['tutorial-1.png', 'tutorial-2.png']
