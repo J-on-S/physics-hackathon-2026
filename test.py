@@ -595,7 +595,6 @@ def draw_ui():
     dy_m = delta_y / PIXELS_PER_METER              # px -> m
 
     info1 = [
-        f"(debug) solution angle*: {solution_angle:.1f}°",
         f"Level: {current_level}/10",
         f"Gravity: {gravity_mss:.2f} m/s²",   # ONE line only (works for planets + random)
         f"Mass: {mass:.2f}kg",
