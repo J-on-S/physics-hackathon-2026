@@ -2,6 +2,7 @@ import pygame
 import random
 import math
 import sys
+import time
 
 pygame.init()
 
@@ -34,6 +35,7 @@ pygame.display.set_caption("Physics Hackathon Prototype")
 
 clock = pygame.time.Clock()
 font = pygame.font.SysFont("Arial", 18)
+bigfont = pygame.font.SysFont("Arial", 30)
 
 GROUND_Y = HEIGHT - 50
 
@@ -146,6 +148,8 @@ def launch():
     launched = True
     t_since_launch = 0.0
 
+
+
 def update_physics():
     global target_rect
     global ball_x, ball_y, vx, vy, launched
@@ -201,7 +205,8 @@ def check_hit():
 #predicted trajectory line
 
 def calculate_trajectory():
-    points = []
+    init_time = time.time()
+    global point
     rad = math.radians(angle)
     sim_vx = velocity * math.cos(rad)
     sim_vy = -velocity * math.sin(rad)
@@ -226,10 +231,9 @@ def calculate_trajectory():
 
         if sim_y >= HEIGHT:
             break
+        point = (int(sim_x), int(sim_y))
 
-        points.append((int(sim_x), int(sim_y)))
-
-    return points
+    return (int(sim_x), int(sim_y))
 
 images = {}
 def load_background(filename):
@@ -242,6 +246,17 @@ def load_background(filename):
         return background
     else:
         return images[filename]
+
+anims = {}
+def load_anim(filenames):
+    anims
+    if (filenames not in anims) or (anims[filenames] == len(filenames) - 1):
+        anims[filenames] = 0
+    else:
+        anims[filenames] += 1
+    frame_no = anims[filenames]
+    image = load_background(filenames[frame_no])
+    return image
 
 
 def draw_ui():
@@ -454,14 +469,12 @@ def level9():
 def winlevel10():
     background = load_background("mystery.png")
     screen.blit(background, (0, 0))
-    global score, current_level
+    global score, current_level, win, FPS
     pygame.draw.rect(screen, (10, 100, 0), target_rect)
 
     if check_hit():
-        youwin = font.render("CONGRATULATIONS! YOU HAVE COMPLETED THE GAME!", True, (0, 0, 0))
-        screen.blit(youwin, (WIDTH//2 - 60,50))
-        pygame.display.flip()
-        pygame.time.delay(10000)
+        FPS = 2
+        win = True
         
 
 backgrounds = {}
@@ -476,6 +489,7 @@ current_level = 1
 # -------------------------
 # MAIN LOOP
 # -------------------------
+win = False
 running = True
 while running:
     clock.tick(FPS)
@@ -492,6 +506,11 @@ while running:
                 current_level += 1
                 if current_level > len(LEVELS):
                     current_level = len(LEVELS)
+            if event.key == pygame.K_w:
+                if current_level == len(LEVELS):
+                    win = True
+                else:
+                    current_level = len(LEVELS)
     
     keys = pygame.key.get_pressed()
     if keys[pygame.K_r] or (ball_x > WIDTH):
@@ -505,7 +524,8 @@ while running:
     velocity = max(100,min(1500,velocity))
     rad = math.radians(angle)
 
-    update_physics()
+    if not win:
+        update_physics()
 
     # Run level-specific logic
     LEVELS[current_level - 1]()
@@ -532,6 +552,14 @@ while running:
     #Draws ground
     pygame.draw.rect(screen, (0, 0, 0), platform)
     
+    #give final vy
+    #f_v_x = calculate_trajectory()[0]
+    #f_v_y = calculate_trajectory()[1]
+    #if point[0] > target_rect.x and point[1] > target_rect.y and point[0] < (target_rect.x + target_rect.width) and point[1] < HEIGHT:
+    #    final_v_x = font.render(f"Vfx = {f_v_x}, Vfy = {f_v_y}", True, (0,150,0))
+    #else:
+    #    final_v_x = font.render(f"Vfx = {f_v_x}, Vfy = {f_v_y}", True, (0,0,0))
+    #screen.blit(final_v_x, (WIDTH//2 - 60, 50))
     # Draw launcher line
     #if not launched:
     #    rad = math.radians(angle)
@@ -551,7 +579,21 @@ while running:
 
     draw_ui()
 
-    pygame.display.flip()
+    if win:
+        win_anim = ('modal-1.png', 'modal-2.png')
+        screen.blit(load_anim(win_anim), (0,0))
+        congrats = font.render("CONGRATULATIONS!", True, (220, 220, 120))
+        screen.blit(congrats, (WIDTH//2 - congrats.width//2, 300))
+        youwin = font.render("YOU HAVE COMPLETED THE GAME!", True, (220, 220, 120))
+        screen.blit(youwin, (WIDTH//2 - youwin.width//2, 350))
+        hacking = bigfont.render("Happy 10th Hackathon!", True, (255, 255, 255))
+        screen.blit(hacking, (WIDTH//2 - hacking.width//2, 250))
+        pygame.display.flip()
+        pygame.time.delay(300)
+    else:
+        pygame.display.flip()
+
+
 
 pygame.quit()
 sys.exit()
