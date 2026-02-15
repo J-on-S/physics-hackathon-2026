@@ -17,7 +17,8 @@ INIT_BALL_Y = GROUND_Y-200
 ball_radius = 10
 angle = 45
 score = 0
-
+t_since_launch = 0    # timer
+solution_v = 0      # hidden "correct" speed for spawning target
 redbirdskin = pygame.transform.scale(pygame.image.load("redbird.png"), (ball_radius*8, ball_radius*8))
 cannon_body = pygame.transform.scale(pygame.image.load("cannon_body.png"), (ball_radius*10, ball_radius*10))
 cannon_wheel = pygame.transform.scale(pygame.image.load("cannon_wheel.png"), (ball_radius*5, ball_radius*5))
@@ -45,10 +46,36 @@ def random_parameters():
     mass = random.uniform(0.5, 5)
     drag_k = random.uniform(0.0, 1.5)
     wind_x = random.uniform(-200, 200)
-    velocity = random.uniform(400,1200)
-    return gravity, mass, drag_k, wind_x, velocity
+    # Random fixed angle and time (given to player)
+    angle = random.randint(20, 70)
+    flight_time = random.uniform(1.1, 1.7)
+    return gravity, mass, drag_k, wind_x, angle, flight_time
 
+def forward_displacement(v0, theta_deg, T, g, wind_x, drag_k, mass):
+    theta = math.radians(theta_deg)
+    vx0 = v0 * math.cos(theta)
+    vy0 = -v0 * math.sin(theta)  # negative = up (pygame)
 
+    # beta = k/m
+    if mass <= 0:
+        return None
+    beta = drag_k / mass
+
+    # No-drag limit (your wind has no effect when drag_k=0 in your code)
+    if abs(beta) < 1e-6:
+        dx = vx0 * T
+        dy = vy0 * T + 0.5 * g * T * T
+        return dx, dy
+
+    A = 1.0 - math.exp(-beta * T)
+
+    # x(t) = wT + (vx0 - w)/beta * (1 - e^{-beta T})
+    dx = wind_x * T + (vx0 - wind_x) * (A / beta)
+
+    # y(t) = (g/beta)T + (vy0 - g/beta)/beta * (1 - e^{-beta T})
+    dy = (g / beta) * T + (vy0 - (g / beta)) * (A / beta)
+
+    return dx, dy
 # -------------------------
 # FUNCTIONS
 # -------------------------
@@ -56,47 +83,84 @@ def random_parameters():
 def reset_round():
     global target_rect
     global ball_x, ball_y, vx, vy, launched
-    global vx, vy, launched
-    global gravity, mass, drag_k, wind_x, velocity
-    angle = 45
-    velocity = 400
+    global gravity, mass, drag_k, wind_x, flight_time, angle, velocity
+    global t_since_launch, solution_v
 
-    gravity, mass, drag_k, wind_x, velocity = random_parameters()
+   
+    # Random physics (your function)
+    gravity, mass, drag_k, wind_x, angle, flight_time = random_parameters()
 
-    ball_radius = 10
+    # Player-controlled variable (speed). Start at a reasonable guess.
+    velocity = 700
+
+   
+
+    # Reset projectile state
     ball_x = 100
-    ball_y = GROUND_Y-200 #200 will be height of slingshot
+    ball_y = GROUND_Y - 200
     vx = 0
     vy = 0
     launched = False
+    t_since_launch = 0.0
 
-    target_rect = pygame.Rect(
-        random.randint(600, 900),
-        HEIGHT - 100,
-        40,
-        100
-    )
+    # Choose a hidden "solution speed" to construct a guaranteed-hit target
+    # Keep it inside a comfortable range for your UI
+    for _ in range(80):  # try a bunch of times to find a valid on-screen target
+        solution_v = random.uniform(500, 1050)
+
+        disp = forward_displacement(solution_v, angle, flight_time,
+                                    gravity, wind_x, drag_k, mass)
+        if disp is None:
+            continue
+        dx, dy = disp
+
+        tx = ball_x + dx
+        ty = ball_y + dy
+
+        # Target size
+        tw, th = 40, 100
+
+        # Keep the entire rect on screen (and above the bottom)
+        left = int(tx - tw / 2)
+        top  = int(ty - th / 2)
+
+        if left < 300 or left + tw > WIDTH - 20:
+            continue
+        if top < 50 or top + th > HEIGHT - 10:
+            continue
+
+        target_rect = pygame.Rect(left, top, tw, th)
+        return
+
+    # Fallback if nothing works (rare): put a safe target
+    target_rect = pygame.Rect(750, HEIGHT - 150, 40, 100)
+    solution_v = 800
 
 reset_round()
 
 def launch():
-    global target_rect
-    global ball_x, ball_y, vx, vy, launched
-    global vx, vy, launched
-    global gravity, mass, drag_k, wind_x, velocity
+    global vx, vy, launched, t_since_launch
     rad = math.radians(angle)
     vx = velocity * math.cos(rad)
     vy = -velocity * math.sin(rad)
     launched = True
+    t_since_launch = 0.0
 
 def update_physics():
     global target_rect
     global ball_x, ball_y, vx, vy, launched
     global vx, vy, launched
     global gravity, mass, drag_k, wind_x, velocity
+    global t_since_launch, flight_time
     if not launched:
         return
-
+    t_since_launch += DT
+    # Option: end round shortly after the "official" flight time
+    if t_since_launch > flight_time:
+        launched = False  # stop sim at official time
+        vx = vy = 0
+    # do NOT reset here; level logic will detect hit, otherwise player can press R
+        return
     # Relative velocity (for wind)
     rel_vx = vx - wind_x
     rel_vy = vy
@@ -189,16 +253,18 @@ def draw_ui():
         f"Level: {current_level}",
         f"Gravity: {gravity:.1f}",
         f"Mass: {mass:.2f}",
-        f"Drag: {drag_k:.2f}",
+        f"Drag k: {drag_k:.2f}",
         f"Wind X: {wind_x:.1f}",
-        "",
         f"Angle: {angle}",
+        f"Flight time:{flight_time:.2f}s ",
+        "",
         f"Velocity: {velocity}",
         "",
         "SPACE = Launch",
-        "R = Reset"
+        "R = Reset",
+        
     ]
-
+    info.insert(0, f"(debug) solution v*: {solution_v:.0f}")
     scoretext = f"Score: {score}"
 
     y_offset = 10
@@ -433,11 +499,10 @@ while running:
 
     if not launched:
         if keys[pygame.K_UP]:
-            angle += 1
+            velocity += 5
         if keys[pygame.K_DOWN]:
-            angle -= 1
-
-    angle = max(5, min(85, angle))
+            velocity -= 5
+    velocity = max(100,min(1500,velocity))
     rad = math.radians(angle)
 
     update_physics()
