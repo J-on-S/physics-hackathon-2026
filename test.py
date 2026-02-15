@@ -642,16 +642,16 @@ def draw_ui():
 
 LEVEL_NAME = {
     0: "Tutorial",
-    1: "Mercury",
-    2: "Venus",
-    3: "Earth",
-    4: "Moon",
-    5: "Mars",
-    6: "Jupiter",
-    7: "Saturn",
-    8: "Uranus",
-    9: "Neptune",
-    10: "Mystery Planet"
+    1: "Level 1/10: Mercury",
+    2: "Level 2/10: Venus",
+    3: "Level 3/10: Earth",
+    4: "Level 4/10: Moon",
+    5: "Level 5/10: Mars",
+    6: "Level 6/10: Jupiter",
+    7: "Level 7/10: Saturn",
+    8: "Level 8/10: Uranus",
+    9: "Level 9/10: Neptune",
+    10: "Level 10/10:Mystery Planet"
 }
 PLANET_COLORS = {
     1: (210, 180, 140),   # Mercury - dusty beige
@@ -683,7 +683,7 @@ def draw_planet_name_box(level):
     box_h = text.get_height() + pad_y * 2
 
     # Top-middle position
-    x = WIDTH // 2 - box_w // 2 + 40   # move 40 pixels right
+    x = WIDTH // 2 - box_w // 2 + 80   # move 40 pixels right
     y = 12
 
     # Per-pixel alpha surface
