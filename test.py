@@ -17,7 +17,6 @@ INIT_BALL_X = 100
 INIT_BALL_Y = GROUND_Y-200
 ball_radius = 10
 angle = 45
-score = 0
 t_since_launch = 0    # timer
 delta_x = 0.0
 delta_y = 0.0
@@ -342,7 +341,6 @@ def draw_ui():
         
     ]
     info.insert(0, f"(debug) solution angle*: {solution_angle:.1f}")
-    scoretext = f"Score: {score}"
 
     y_offset = 10
     for line in info:
@@ -350,8 +348,6 @@ def draw_ui():
         screen.blit(text, (10, y_offset))
         y_offset += 22
 
-    scoretextobject = font.render(scoretext, True, (0,0,0))
-    screen.blit(scoretextobject, (WIDTH-scoretextobject.get_width()-10, 10))
 
 TUTORIAL_SCREENS = ['tutorial-1.png', 'tutorial-2.png']
 tutorial_screen_no = 0
@@ -364,7 +360,7 @@ def tutorial():
 def level1():
     background = load_background("mercury.png")
     screen.blit(background, (0, 0))
-    global score, current_level
+    global current_level
     # Draw target
     pygame.draw.rect(screen, (200, 0, 0), target_rect)
 
@@ -376,7 +372,6 @@ def level1():
         screen.blit(win_text, (WIDTH//2 - 60, 50))
         pygame.display.flip() # Show the win text for 500ms
         pygame.time.delay(500)
-        score += 1
         current_level = 2 # Move to level 2
         #press key to continue
         reset_round()
@@ -384,7 +379,7 @@ def level1():
 def level2():
     background = load_background("venus2.png")
     screen.blit(background, (0, 0))
-    global score, current_level
+    global current_level
     # Draw target
     pygame.draw.rect(screen, (10, 100, 0), target_rect)
 
@@ -396,7 +391,6 @@ def level2():
         screen.blit(win_text, (WIDTH//2 - 60, 50))
         pygame.display.flip() # Show the win text for 500ms
         pygame.time.delay(500)
-        score += 1
         current_level += 1 # Move back to level 1
         #press key to continue
         reset_round()
@@ -404,7 +398,7 @@ def level2():
 def level3():
     background = load_background("earth2.png")
     screen.blit(background, (0, 0))
-    global score, current_level
+    global current_level
     # Draw target
     pygame.draw.rect(screen, (10, 100, 0), target_rect)
 
@@ -416,14 +410,13 @@ def level3():
         screen.blit(win_text, (WIDTH//2 - 60, 50))
         pygame.display.flip() # Show the win text for 500ms
         pygame.time.delay(500)
-        score += 1
         current_level += 1 # Move back to level 1
         #press key to continue
         reset_round()
 def level4():
     background = load_background("moon2.png")
     screen.blit(background, (0, 0))
-    global score, current_level
+    global current_level
     # Draw target
     pygame.draw.rect(screen, (10, 100, 0), target_rect)
 
@@ -435,14 +428,13 @@ def level4():
         screen.blit(win_text, (WIDTH//2 - 60, 50))
         pygame.display.flip() # Show the win text for 500ms
         pygame.time.delay(500)
-        score += 1
         current_level += 1 # Move back to level 1
         #press key to continue
         reset_round()
 def level5():
     background = load_background("mars2.png")
     screen.blit(background, (0, 0))
-    global score, current_level
+    global current_level
     # Draw target
     pygame.draw.rect(screen, (10, 100, 0), target_rect)
 
@@ -454,14 +446,13 @@ def level5():
         screen.blit(win_text, (WIDTH//2 - 60, 50))
         pygame.display.flip() # Show the win text for 500ms
         pygame.time.delay(500)
-        score += 1
         current_level += 1 # Move back to level 1
         #press key to continue
         reset_round()
 def level6():
     background = load_background("jupiter.png")
     screen.blit(background, (0, 0))
-    global score, current_level
+    global current_level
     # Draw target
     pygame.draw.rect(screen, (10, 100, 0), target_rect)
 
@@ -473,14 +464,13 @@ def level6():
         screen.blit(win_text, (WIDTH//2 - 60, 50))
         pygame.display.flip() # Show the win text for 500ms
         pygame.time.delay(500)
-        score += 1
         current_level += 1 # Move back to level 1
         #press key to continue
         reset_round()
 def level7():
     background = load_background("saturn.png")
     screen.blit(background, (0, 0))
-    global score, current_level
+    global current_level
     # Draw target
     pygame.draw.rect(screen, (10, 100, 0), target_rect)
 
@@ -492,14 +482,13 @@ def level7():
         screen.blit(win_text, (WIDTH//2 - 60, 50))
         pygame.display.flip() # Show the win text for 500ms
         pygame.time.delay(500)
-        score += 1
         current_level += 1 # Move back to level 1
         #press key to continue
         reset_round()
 def level8():
     background = load_background("uranus.png")
     screen.blit(background, (0, 0))
-    global score, current_level
+    global current_level
     # Draw target
     pygame.draw.rect(screen, (10, 100, 0), target_rect)
 
@@ -511,14 +500,13 @@ def level8():
         screen.blit(win_text, (WIDTH//2 - 60, 50))
         pygame.display.flip() # Show the win text for 500ms
         pygame.time.delay(500)
-        score += 1
         current_level += 1 # Move back to level 1
         #press key to continue
         reset_round()
 def level9():
     background = load_background("neptune.png")
     screen.blit(background, (0, 0))
-    global score, current_level
+    global current_level
     # Draw target
     pygame.draw.rect(screen, (10, 100, 0), target_rect)
 
@@ -530,7 +518,6 @@ def level9():
         screen.blit(win_text, (WIDTH//2 - 60, 50))
         pygame.display.flip() # Show the win text for 500ms
         pygame.time.delay(500)
-        score += 1
         current_level += 1 # Move back to level 1
         #press key to continue
         reset_round()
@@ -539,7 +526,7 @@ def level9():
 def winlevel10():
     background = load_background("mystery.png")
     screen.blit(background, (0, 0))
-    global score, current_level, win, FPS
+    global current_level, win, FPS
     pygame.draw.rect(screen, (10, 100, 0), target_rect)
 
     if check_hit():
