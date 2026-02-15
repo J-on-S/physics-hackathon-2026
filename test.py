@@ -669,7 +669,10 @@ def winlevel10():
     pygame.draw.rect(screen, (10, 100, 0), target_rect)
 
     if check_hit():
-        FPS = 2
+        pygame.mixer.init()
+        # Music: https://pixabay.com/sound-effects/search/serene/
+        pygame.mixer.music.load('gigidelaromusic-serene-air-tone-short-450969.mp3')
+        pygame.mixer.music.play(-1)
         win = True
         
 
@@ -735,6 +738,10 @@ while running:
                 reset_round()
             if event.key == pygame.K_w:
                 if current_level == len(LEVELS) - 1:
+                    pygame.mixer.init()
+                    # Music: https://pixabay.com/sound-effects/search/serene/
+                    pygame.mixer.music.load('gigidelaromusic-serene-air-tone-short-450969.mp3')
+                    pygame.mixer.music.play(-1)
                     win = True
                 else:
                     current_level = len(LEVELS) - 1
