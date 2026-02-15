@@ -20,6 +20,8 @@ angle = 45
 score = 0
 t_since_launch = 0    # timer
 solution_v = 0      # hidden "correct" speed for spawning target
+delta_x = 0.0
+delta_y = 0.0
 redbirdskin = pygame.transform.scale(pygame.image.load("redbird.png"), (ball_radius*8, ball_radius*8))
 cannon_body = pygame.transform.scale(pygame.image.load("cannon_body.png"), (ball_radius*10, ball_radius*10))
 cannon_wheel = pygame.transform.scale(pygame.image.load("cannon_wheel.png"), (ball_radius*5, ball_radius*5))
@@ -132,11 +134,17 @@ def reset_round():
             continue
 
         target_rect = pygame.Rect(left, top, tw, th)
+        global delta_x, delta_y
+        delta_x = target_rect.centerx - ball_x
+        delta_y = target_rect.centery - ball_y   # pygame: down is positive (matches your formulas)
         return
 
     # Fallback if nothing works (rare): put a safe target
     target_rect = pygame.Rect(750, HEIGHT - 150, 40, 100)
     solution_v = 800
+
+    delta_x = target_rect.centerx - ball_x
+    delta_y = target_rect.centery - ball_y
 
 reset_round()
 
@@ -264,6 +272,7 @@ def draw_ui():
     global ball_x, ball_y, vx, vy, launched
     global vx, vy, launched
     global gravity, mass, drag_k, wind_x, velocity
+    global delta_x, delta_y
     info = [
         f"Level: {current_level}",
         f"Gravity: {gravity:.1f}",
@@ -271,7 +280,9 @@ def draw_ui():
         f"Drag k: {drag_k:.2f}",
         f"Wind X: {wind_x:.1f}",
         f"Angle: {angle}",
-        f"Flight time:{flight_time:.2f}s ",
+        f"Flight time:{flight_time:.2f}s " ,
+        f"Δx: {delta_x:.1f}",
+        f"Δy: {delta_y:.1f} (down +)",
         "",
         f"Velocity: {velocity}",
         "",
