@@ -207,6 +207,10 @@ def find_target_point_for_angle(test_angle, velocity, gravity, wind_x, drag_k, m
 def draw_hint_ui():
     global hint_open
 
+    # Don't draw at game start or end
+    if current_level == 0 or win:
+        return
+
     # Draw Hint button (always visible)
     pygame.draw.rect(screen, (245, 245, 245), hint_btn_rect, border_radius=8)
     pygame.draw.rect(screen, (0, 0, 0), hint_btn_rect, 2, border_radius=8)
