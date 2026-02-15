@@ -607,9 +607,9 @@ def draw_ui():
         f"(debug) solution angle*: {solution_angle:.1f}°",
         f"Level: {current_level}",
         f"Gravity: {gravity_mss:.2f} m/s²",   # ONE line only (works for planets + random)
-        f"Mass: {mass:.2f}",
-        f"Drag k: {drag_k:.2f}",
-        f"Wind X: {wind_ms:.2f} m/s",
+        f"Mass: {mass:.2f}kg",
+        f"Drag force: {drag_k:.2f}",
+        f"Wind (x-axis only): {wind_ms:.2f} m/s",
         f"Flight time: {flight_time:.2f}s",
     ]
     mode_name = "Mode 1 (Drag+Wind)" if game_mode == MODE_DRAG_TRIAL else "Mode 2 (No Drag/Wind)"
