@@ -123,16 +123,16 @@ def forward_displacement_for_angle(test_angle, velocity, gravity, wind_x, drag_k
 
     for _ in range(max_steps):
         # relative velocity for drag (wind only affects x-relative speed)
-        rel_vx = sim_vx - wind_x
-        rel_vy = sim_vy
+        #rel_vx = sim_vx - wind_x
+        #rel_vy = sim_vy
 
-        drag_fx = -drag_k * rel_vx
-        drag_fy = -drag_k * rel_vy
+        #drag_fx = -drag_k * rel_vx
+        #drag_fy = -drag_k * rel_vy
 
-        ax = drag_fx / mass
-        ay = gravity + (drag_fy / mass)
+        #ax = drag_fx / mass
+        ay = gravity #+ (drag_fy / mass)
 
-        sim_vx += ax * DT
+        #sim_vx += ax * DT
         sim_vy += ay * DT
 
         sim_x += sim_vx * DT
@@ -169,16 +169,16 @@ def find_target_point_for_angle(test_angle, velocity, gravity, wind_x, drag_k, m
 
     for _ in range(2000):
         # drag (wind affects relative x speed)
-        rel_vx = sim_vx - wind_x
-        rel_vy = sim_vy
+        #rel_vx = sim_vx - wind_x
+        #rel_vy = sim_vy
 
-        drag_fx = -drag_k * rel_vx
-        drag_fy = -drag_k * rel_vy
+        #drag_fx = -drag_k * rel_vx
+        #drag_fy = -drag_k * rel_vy
 
-        ax = drag_fx / mass
-        ay = gravity + (drag_fy / mass)
+        #ax = drag_fx / mass
+        ay = gravity #+ (drag_fy / mass)
 
-        sim_vx += ax * DT
+        #sim_vx += ax * DT
         sim_vy += ay * DT
         sim_x += sim_vx * DT
         sim_y += sim_vy * DT
@@ -339,16 +339,16 @@ def update_physics():
         return
 
     # drag with wind-relative x speed
-    rel_vx = vx - wind_x
-    rel_vy = vy
+    #rel_vx = vx - wind_x
+    #rel_vy = vy
 
-    drag_fx = -drag_k * rel_vx
-    drag_fy = -drag_k * rel_vy
+    #drag_fx = -drag_k * rel_vx
+    #drag_fy = -drag_k * rel_vy
 
-    ax = drag_fx / mass
-    ay = gravity + (drag_fy / mass)
+    #ax = drag_fx / mass
+    ay = gravity #+ (drag_fy / mass)
 
-    vx += ax * DT
+    #vx += ax * DT
     vy += ay * DT
 
     ball_x += vx * DT
@@ -383,16 +383,16 @@ def calculate_trajectory():
     sim_y = ball_y
 
     for _ in range(300):  # number of simulation steps
-        rel_vx = sim_vx - wind_x
-        rel_vy = sim_vy
+        #rel_vx = sim_vx - wind_x
+        #rel_vy = sim_vy
 
-        drag_fx = -drag_k * rel_vx
-        drag_fy = -drag_k * rel_vy
+        #drag_fx = -drag_k * rel_vx
+        #drag_fy = -drag_k * rel_vy
 
-        ax = drag_fx / mass
-        ay = gravity + (drag_fy / mass)
+        #ax = drag_fx / mass
+        ay = gravity #+ (drag_fy / mass)
 
-        sim_vx += ax * DT
+        #sim_vx += ax * DT
         sim_vy += ay * DT
 
         sim_x += sim_vx * DT
