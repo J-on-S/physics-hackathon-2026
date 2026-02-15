@@ -22,6 +22,24 @@ delta_x = 0.0
 delta_y = 0.0
 FIXED_VELOCITY = 700
 solution_angle = 0 
+# -------------------------
+# UNIT CONVERSION
+# -------------------------
+PIXELS_PER_METER = 50  # 50 pixels = 1 meter 
+# --- REAL GRAVITY (m/s^2) scaled to your px/s^2 ---
+EARTH_PIXEL_GRAVITY = 9.81 * PIXELS_PER_METER  # Earth will feel like 500 px/s^2 in your game
+
+PLANET_GRAVITY_MSS = {
+    1: 3.70,   # Mercury
+    2: 8.87,   # Venus
+    3: 9.81,   # Earth
+    4: 1.62,   # Moon
+    5: 3.71,   # Mars
+    6: 24.79,  # Jupiter
+    7: 10.44,  # Saturn
+    8: 8.69,   # Uranus
+    9: 11.15   # Neptune
+}
 redbirdskin = pygame.transform.scale(pygame.image.load("redbird.png"), (ball_radius*8, ball_radius*8))
 cannon_body = pygame.transform.scale(pygame.image.load("cannon_body.png"), (ball_radius*10, ball_radius*10))
 cannon_wheel = pygame.transform.scale(pygame.image.load("cannon_wheel.png"), (ball_radius*5, ball_radius*5))
@@ -150,15 +168,34 @@ def find_target_point_for_angle(test_angle, velocity, gravity, wind_x, drag_k, m
 
     return best_rect, best_t
 
+def gravity_for_level(level):
+    # levels 1..9 use real gravities (scaled)
+    if level in PLANET_GRAVITY_MSS:
+        real_g = PLANET_GRAVITY_MSS[level]
+        return EARTH_PIXEL_GRAVITY * (real_g / 9.81)  # scale vs Earth
+    # last level (10) stays randomized (your request)
+    return random.uniform(300, 800)
+
+current_level = 0   # tutorial level first
+
 def reset_round():
     global target_rect
     global ball_x, ball_y, vx, vy, launched
-    global gravity, mass, drag_k, wind_x, flight_time, angle, velocity
+    global flight_time, angle, velocity
     global t_since_launch, solution_angle
     global delta_x, delta_y
 
-    # random physics
-    gravity, mass, drag_k, wind_x = random_parameters()
+    global current_level
+    global gravity, mass, drag_k, wind_x
+
+    # Set gravity based on the planet (level)
+    gravity = gravity_for_level(current_level if current_level != 0 else 1)
+
+    # Randomize the other parameters like before
+    mass = random.uniform(0.5, 5)
+    drag_k = random.uniform(0.0, 1.5)
+    wind_x = random.uniform(-200, 200)
+    
 
     # fixed velocity for the whole game
     velocity = FIXED_VELOCITY
@@ -317,34 +354,39 @@ def load_anim(filenames):
 
 
 def draw_ui():
-    global target_rect
-    global ball_x, ball_y, vx, vy, launched
-    global vx, vy, launched
     global gravity, mass, drag_k, wind_x, velocity
-    global delta_x, delta_y
-    global solution_angle
+    global delta_x, delta_y, current_level, solution_angle
+    global PIXELS_PER_METER, flight_time, angle
+
+    # Convert internal pixel-units to SI-units for display
+    gravity_mss = gravity / PIXELS_PER_METER       # px/s² -> m/s²
+    velocity_ms = velocity / PIXELS_PER_METER      # px/s  -> m/s
+    wind_ms = wind_x / PIXELS_PER_METER            # px/s  -> m/s
+    dx_m = delta_x / PIXELS_PER_METER              # px -> m
+    dy_m = delta_y / PIXELS_PER_METER              # px -> m
+
     info = [
+        f"(debug) solution angle*: {solution_angle:.1f}°",
         f"Level: {current_level}",
-        f"Gravity: {gravity:.1f}",
+        f"Gravity: {gravity_mss:.2f} m/s²",   # ONE line only (works for planets + random)
         f"Mass: {mass:.2f}",
         f"Drag k: {drag_k:.2f}",
-        f"Wind X: {wind_x:.1f}",
-        f"Angle: {angle}",
-        f"Flight time:{flight_time:.2f}s " ,
-        f"Δx: {delta_x:.1f}",
-        f"Δy: {delta_y:.1f} (down +)",
+        f"Wind X: {wind_ms:.2f} m/s",
+        f"Angle: {angle:.1f}°",
+        f"Flight time: {flight_time:.2f}s",
+        f"Δx: {dx_m:.2f} m",
+        f"Δy: {dy_m:.2f} m (down +)",
         "",
-        f"Velocity: {velocity}",
+        f"Velocity (fixed): {velocity_ms:.2f} m/s",
         "",
+        "UP/DOWN = Change angle",
         "SPACE = Launch",
         "R = Reset",
-        
     ]
-    info.insert(0, f"(debug) solution angle*: {solution_angle:.1f}")
 
     y_offset = 10
     for line in info:
-        text = font.render(line, True, (0,0,0))
+        text = font.render(line, True, (0, 0, 0))
         screen.blit(text, (10, y_offset))
         y_offset += 22
 
@@ -536,7 +578,7 @@ def winlevel10():
 
 backgrounds = {}
 LEVELS = [tutorial, level1, level2, level3, level4, level5, level6, level7, level8, level9, winlevel10]
-current_level = 0
+
 
 #def updatescore():
 #    scoretext = f"Score: {score}"
