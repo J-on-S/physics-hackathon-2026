@@ -52,7 +52,7 @@ pygame.mixer.music.load('backgroundmusicforvideos-gaming-game-minecraft-backgrou
 pygame.mixer.music.play(-1)
 
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
-pygame.display.set_caption("Physics Hackathon Prototype")
+pygame.display.set_caption("Deca-Launch")
 
 clock = pygame.time.Clock()
 font = pygame.font.SysFont("Arial", 18)
