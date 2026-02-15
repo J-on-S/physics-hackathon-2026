@@ -1056,7 +1056,7 @@ while running:
     #    pygame.draw.line(screen, (0,0,0), (ball_x, ball_y), (lx, ly), 3)
 
     # Draw predicted trajectory as a dotted line
-    if game_mode == MODE_DRAG_TRIAL and not launched:
+    if not paused and game_mode == MODE_DRAG_TRIAL and not launched:
         trajectory_points = calculate_trajectory_points()
         for i in range(0, len(trajectory_points) - 1, 3):  # skip to create gaps
             pygame.draw.line(screen, (150, 150, 150),
