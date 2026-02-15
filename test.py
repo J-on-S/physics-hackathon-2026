@@ -40,6 +40,7 @@ PLANET_GRAVITY_MSS = {
     8: 8.69,   # Uranus
     9: 11.15   # Neptune
 }
+
 redbirdskin = pygame.transform.scale(pygame.image.load("redbird.png"), (ball_radius*8, ball_radius*8))
 cannon_body = pygame.transform.scale(pygame.image.load("cannon_body.png"), (ball_radius*10, ball_radius*10))
 cannon_wheel = pygame.transform.scale(pygame.image.load("cannon_wheel.png"), (ball_radius*5, ball_radius*5))
@@ -58,7 +59,42 @@ font = pygame.font.SysFont("Arial", 18)
 bigfont = pygame.font.SysFont("Arial", 30)
 
 GROUND_Y = HEIGHT - 50
+# -------------------------
+# HINT POPUP UI
+# -------------------------
+HINT_IMAGE_PATH = "hint_formula.png"  # <- put your png in the same folder (or change path)
 
+hint_open = False
+
+# Button (top-right)
+HINT_BTN_W, HINT_BTN_H = 90, 34
+HINT_BTN_MARGIN = 12
+hint_btn_rect = pygame.Rect(WIDTH - HINT_BTN_W - HINT_BTN_MARGIN, HINT_BTN_MARGIN, HINT_BTN_W, HINT_BTN_H)
+
+# Popup panel (top-right)
+HINT_PANEL_W, HINT_PANEL_H = 360, 260
+hint_panel_rect = pygame.Rect(WIDTH - HINT_PANEL_W - HINT_BTN_MARGIN, HINT_BTN_MARGIN + HINT_BTN_H + 10, HINT_PANEL_W, HINT_PANEL_H)
+
+# Close button (inside panel)
+CLOSE_BTN_SIZE = 26
+hint_close_rect = pygame.Rect(
+    hint_panel_rect.right - CLOSE_BTN_SIZE - 10,
+    hint_panel_rect.top + 10,
+    CLOSE_BTN_SIZE,
+    CLOSE_BTN_SIZE
+)
+
+# Load & scale hint image once
+hint_image_raw = pygame.image.load(HINT_IMAGE_PATH).convert_alpha()
+# Fit image into panel with padding
+HINT_PAD = 14
+max_w = HINT_PANEL_W - 2 * HINT_PAD
+max_h = HINT_PANEL_H - 2 * HINT_PAD - 30  # leave room for header/close button
+scale = min(max_w / hint_image_raw.get_width(), max_h / hint_image_raw.get_height(), 1.0)
+hint_image = pygame.transform.smoothscale(
+    hint_image_raw,
+    (int(hint_image_raw.get_width() * scale), int(hint_image_raw.get_height() * scale))
+)
 # -------------------------
 # RANDOM PHYSICS PARAMETERS
 # -------------------------
@@ -168,6 +204,39 @@ def find_target_point_for_angle(test_angle, velocity, gravity, wind_x, drag_k, m
 
     return best_rect, best_t
 
+def draw_hint_ui():
+    global hint_open
+
+    # Draw Hint button (always visible)
+    pygame.draw.rect(screen, (245, 245, 245), hint_btn_rect, border_radius=8)
+    pygame.draw.rect(screen, (0, 0, 0), hint_btn_rect, 2, border_radius=8)
+    label = font.render("HINT", True, (0, 0, 0))
+    screen.blit(label, (hint_btn_rect.centerx - label.get_width() // 2,
+                        hint_btn_rect.centery - label.get_height() // 2))
+
+    if not hint_open:
+        return
+
+    # Panel background
+    pygame.draw.rect(screen, (255, 255, 255), hint_panel_rect, border_radius=12)
+    pygame.draw.rect(screen, (0, 0, 0), hint_panel_rect, 2, border_radius=12)
+
+    # Title
+    title = font.render("Hint", True, (0, 0, 0))
+    screen.blit(title, (hint_panel_rect.x + 14, hint_panel_rect.y + 12))
+
+    # Close button
+    pygame.draw.rect(screen, (240, 240, 240), hint_close_rect, border_radius=6)
+    pygame.draw.rect(screen, (0, 0, 0), hint_close_rect, 2, border_radius=6)
+    x_text = font.render("X", True, (0, 0, 0))
+    screen.blit(x_text, (hint_close_rect.centerx - x_text.get_width() // 2,
+                         hint_close_rect.centery - x_text.get_height() // 2))
+
+    # Draw hint image centered in the remaining space
+    img_x = hint_panel_rect.x + (hint_panel_rect.w - hint_image.get_width()) // 2
+    img_y = hint_panel_rect.y + 44 + (hint_panel_rect.h - 44 - hint_image.get_height()) // 2
+    screen.blit(hint_image, (img_x, img_y))
+
 def gravity_for_level(level):
     # levels 1..9 use real gravities (scaled)
     if level in PLANET_GRAVITY_MSS:
@@ -189,7 +258,7 @@ def reset_round():
     global gravity, mass, drag_k, wind_x
 
     # Set gravity based on the planet (level)
-    gravity = gravity_for_level(current_level if current_level != 0 else 1)
+    gravity = gravity_for_level(current_level)
 
     # Randomize the other parameters like before
     mass = random.uniform(0.5, 5)
@@ -595,6 +664,29 @@ while running:
     screen.fill((220, 220, 255))
 
     for event in pygame.event.get():
+
+        if event.type == pygame.QUIT:
+            running = False
+
+        if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+            mx, my = event.pos   # <-- define them here
+
+        # Click Hint button
+            if hint_btn_rect.collidepoint(mx, my):
+                hint_open = not hint_open
+
+        # Click close button
+            elif hint_open and hint_close_rect.collidepoint(mx, my):
+                hint_open = False
+
+        # Optional: click outside closes popup
+            elif hint_open and not hint_panel_rect.collidepoint(mx, my):
+                hint_open = False
+
+        if event.type == pygame.KEYDOWN:
+            if hint_open and event.key == pygame.K_ESCAPE:
+                hint_open = False
+
         if event.type == pygame.QUIT:
             running = False
 
@@ -605,12 +697,14 @@ while running:
                 if tutorial_screen_no == len(TUTORIAL_SCREENS):
                     # Move to next level after tutorial
                     current_level += 1
+                    reset_round()
             elif event.key == pygame.K_SPACE and not launched:
                 launch()
             if event.key == pygame.K_n:
                 current_level += 1
                 if current_level >= len(LEVELS):
                     current_level = len(LEVELS) - 1
+                reset_round()
             if event.key == pygame.K_w:
                 if current_level == len(LEVELS) - 1:
                     win = True
@@ -688,6 +782,8 @@ while running:
 
     if not paused:
         draw_ui()
+    
+    draw_hint_ui()
 
     if win:
         win_anim = ('modal-1.png', 'modal-2.png')
