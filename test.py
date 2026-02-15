@@ -235,17 +235,8 @@ def forward_displacement_for_angle(test_angle, velocity, gravity, wind_x, drag_k
     t = 0.0
 
     for _ in range(max_steps):
-        # relative velocity for drag (wind only affects x-relative speed)
-        #rel_vx = sim_vx - wind_x
-        #rel_vy = sim_vy
+        ay = gravity 
 
-        #drag_fx = -drag_k * rel_vx
-        #drag_fy = -drag_k * rel_vy
-
-        #ax = drag_fx / mass
-        ay = gravity #+ (drag_fy / mass)
-
-        #sim_vx += ax * DT
         sim_vy += ay * DT
 
         sim_x += sim_vx * DT
@@ -280,7 +271,7 @@ def find_target_point_for_angle(test_angle, velocity, gravity, wind_x, drag_k, m
     best_dx = -1e9
 
     for _ in range(4000):
-        # ✅ SAME drag + wind model as update_physics
+        # SAME drag + wind model as update_physics
         rel_vx = sim_vx - wind_x
         rel_vy = sim_vy
 
@@ -492,7 +483,7 @@ def update_physics():
         ax = 0.0
         ay = gravity
 
-    # ✅ APPLY both
+    # APPLY both
     vx += ax * DT
     vy += ay * DT
 
@@ -542,7 +533,7 @@ def calculate_trajectory_points(max_steps=600):
             ax = 0.0
             ay = gravity
 
-        # ✅ APPLY both
+        # APPLY both
         sim_vx += ax * DT
         sim_vy += ay * DT
         sim_x += sim_vx * DT
@@ -731,11 +722,7 @@ def level1():
     screen.blit(background, (0, 0))
     global current_level
     # Draw target
-    #pygame.draw.rect(screen, (200, 0, 0), target_rect)
     screen.blit(target, (target_rect.x, target_rect.y))
-
-    # Draw ball
-    #pygame.draw.circle(screen, (0, 100, 255), (int(ball_x), int(ball_y)), ball_radius)
 
     if check_hit():
         message = "TARGET HIT!"
@@ -768,11 +755,7 @@ def level2():
     screen.blit(background, (0, 0))
     global current_level
     # Draw target
-    #pygame.draw.rect(screen, (10, 100, 0), target_rect)
     screen.blit(target, (target_rect.x, target_rect.y))
-
-    # Draw ball
-    #pygame.draw.circle(screen, (0, 100, 255), (int(ball_x), int(ball_y)), ball_radius)
 
     if check_hit():
         message = "TARGET HIT!"
@@ -805,11 +788,7 @@ def level3():
     screen.blit(background, (0, 0))
     global current_level
     # Draw target
-    #pygame.draw.rect(screen, (10, 100, 0), target_rect)
     screen.blit(target, (target_rect.x, target_rect.y))
-
-    # Draw ball
-    #pygame.draw.circle(screen, (0, 100, 255), (int(ball_x), int(ball_y)), ball_radius)
 
     if check_hit():
         message = "TARGET HIT!"
@@ -841,11 +820,7 @@ def level4():
     screen.blit(background, (0, 0))
     global current_level
     # Draw target
-    #pygame.draw.rect(screen, (10, 100, 0), target_rect)
     screen.blit(target, (target_rect.x, target_rect.y))
-
-    # Draw ball
-    #pygame.draw.circle(screen, (0, 100, 255), (int(ball_x), int(ball_y)), ball_radius)
 
     if check_hit():
         message = "TARGET HIT!"
@@ -877,11 +852,7 @@ def level5():
     screen.blit(background, (0, 0))
     global current_level
     # Draw target
-    #pygame.draw.rect(screen, (10, 100, 0), target_rect)
     screen.blit(target, (target_rect.x, target_rect.y))
-
-    # Draw ball
-    #pygame.draw.circle(screen, (0, 100, 255), (int(ball_x), int(ball_y)), ball_radius)
 
     if check_hit():
         message = "TARGET HIT!"
@@ -913,11 +884,7 @@ def level6():
     screen.blit(background, (0, 0))
     global current_level
     # Draw target
-    #pygame.draw.rect(screen, (10, 100, 0), target_rect)
     screen.blit(target, (target_rect.x, target_rect.y))
-
-    # Draw ball
-    #pygame.draw.circle(screen, (0, 100, 255), (int(ball_x), int(ball_y)), ball_radius)
 
     if check_hit():
         message = "TARGET HIT!"
@@ -949,11 +916,7 @@ def level7():
     screen.blit(background, (0, 0))
     global current_level
     # Draw target
-    #pygame.draw.rect(screen, (10, 100, 0), target_rect)
     screen.blit(target, (target_rect.x, target_rect.y))
-
-    # Draw ball
-    #pygame.draw.circle(screen, (0, 100, 255), (int(ball_x), int(ball_y)), ball_radius)
 
     if check_hit():
         message = "TARGET HIT!"
@@ -985,11 +948,7 @@ def level8():
     screen.blit(background, (0, 0))
     global current_level
     # Draw target
-    #pygame.draw.rect(screen, (10, 100, 0), target_rect)
     screen.blit(target, (target_rect.x, target_rect.y))
-
-    # Draw ball
-    #pygame.draw.circle(screen, (0, 100, 255), (int(ball_x), int(ball_y)), ball_radius)
 
     if check_hit():
         message = "TARGET HIT!"
@@ -1021,11 +980,7 @@ def level9():
     screen.blit(background, (0, 0))
     global current_level
     # Draw target
-    #pygame.draw.rect(screen, (10, 100, 0), target_rect)
     screen.blit(target, (target_rect.x, target_rect.y))
-
-    # Draw ball
-    #pygame.draw.circle(screen, (0, 100, 255), (int(ball_x), int(ball_y)), ball_radius)
 
     if check_hit():
         message = "TARGET HIT!"
@@ -1058,7 +1013,6 @@ def winlevel10():
     background = load_background("mystery.png")
     screen.blit(background, (0, 0))
     global current_level, win, FPS
-    #pygame.draw.rect(screen, (10, 100, 0), target_rect)
     screen.blit(target, (target_rect.x, target_rect.y))
 
     if check_hit():
@@ -1071,12 +1025,6 @@ def winlevel10():
 
 backgrounds = {}
 LEVELS = [tutorial, level1, level2, level3, level4, level5, level6, level7, level8, level9, winlevel10]
-
-
-#def updatescore():
-#    scoretext = f"Score: {score}"
-#    scoretextobject = font.render(scoretext, True, (0,0,0))
-#    screen.blit(scoretextobject, (WIDTH-scoretextobject.width-10, 10))
 
 # -------------------------
 # MAIN LOOP
@@ -1204,25 +1152,10 @@ while running:
         screen.blit(cannon_wheel, (INIT_BALL_X - (cannon_wheel.get_width()/2), INIT_BALL_Y + (cannon_wheel.get_height()/3)))
 
 
-    #give final vy
-    #f_v_x = calculate_trajectory()[0]
-    #f_v_y = calculate_trajectory()[1]
-    #if point[0] > target_rect.x and point[1] > target_rect.y and point[0] < (target_rect.x + target_rect.width) and point[1] < HEIGHT:
-    #    final_v_x = font.render(f"Vfx = {f_v_x}, Vfy = {f_v_y}", True, (0,150,0))
-    #else:
-    #    final_v_x = font.render(f"Vfx = {f_v_x}, Vfy = {f_v_y}", True, (0,0,0))
-    #screen.blit(final_v_x, (WIDTH//2 - 60, 50))
-    # Draw launcher line
-    #if not launched:
-    #    rad = math.radians(angle)
-    #    lx = ball_x + 40 * math.cos(rad)
-    #    ly = ball_y - 40 * math.sin(rad)
-    #    pygame.draw.line(screen, (0,0,0), (ball_x, ball_y), (lx, ly), 3)
-
     # Draw predicted trajectory as a dotted line
     if not paused and game_mode == MODE_DRAG_TRIAL and not launched:
         trajectory_points = calculate_trajectory_points()
-        for i in range(0, len(trajectory_points) - 1, 3):  # skip to create gaps
+        for i in range(0, len(trajectory_points) - 1, 3): 
             pygame.draw.line(screen, (150, 150, 150),
             trajectory_points[i], trajectory_points[i + 1], 2)
 
